@@ -10,3 +10,8 @@ wiki = TextBlob("Python is a high-level, general-purpose programming language.In
 from textblob import Word
 w = Word("playing")
 w.lemmatize()
+from nltk.corpus import stopwords
+set(stopwords.words('english'))
+from nltk.stem import WordNetLemmatizer  
+lemmatizer = WordNetLemmatizer()  
+lemmatizer.lemmatize('leaves') 

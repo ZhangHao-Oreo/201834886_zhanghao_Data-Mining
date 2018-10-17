@@ -22,12 +22,7 @@ def iterbrowse(path):
             yield os.path.join(home, filename)
 
 
-for fullname in iterbrowse("E:\\new"):
-    #fullname是绝对路径
-    #print fullname 
-    filename=os.path.basename(fullname)
-    #filename是目录下的所有文件名
-    print (filename)
+
 
 
 
@@ -122,9 +117,31 @@ for i, count in enumerate(countlist):
     for word, score in sorted_words[:3]:
         print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
 
+i = 0
+for fullname in iterbrowse("E:\\new"):
+    #fullname是绝对路径
+    #print fullname 
+    filename=os.path.basename(fullname)
+    #filename是目录下的所有文件名
+    print (filename)
+    f = open(fullname,'r',errors='ignore')
+    text = f.read()
+    text = text.replace('\r','').replace('\n','').replace('\t','')
+    f.close()
+    tokens = get_tokens(text)
+    filtered = [w for w in tokens if not w in stopwords.words('english')]
+    stemmer = PorterStemmer()
+    stemmed = stem_tokens(filtered, stemmer)
+    locals()['count%d'%i] = Counter(stemmed)
+    countlist.insert(i,locals()['count%d'%i])
+    i=i+1
+    print(count)
 
 
 
-
-
-
+for i, count in enumerate(countlist):
+    print("Top words in document {}".format(i + 1))
+    scores = {word: tfidf(word, count, countlist) for word in count}
+    sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    for word, score in sorted_words[:3]:
+        print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))

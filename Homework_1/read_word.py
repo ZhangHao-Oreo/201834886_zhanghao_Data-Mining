@@ -13,6 +13,24 @@ text = text.replace('\r','').replace('\n','').replace('\t','')
 #text.replace("\n","")
 f.close()
 
+
+import os
+
+def iterbrowse(path):
+    for home, dirs, files in os.walk(path):
+        for filename in files:
+            yield os.path.join(home, filename)
+
+
+for fullname in iterbrowse("E:\\new"):
+    #fullname是绝对路径
+    #print fullname 
+    filename=os.path.basename(fullname)
+    #filename是目录下的所有文件名
+    print (filename)
+
+
+
 import nltk
 import string
 import math

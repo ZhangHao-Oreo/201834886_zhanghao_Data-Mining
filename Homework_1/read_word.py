@@ -143,5 +143,5 @@ for i, count in enumerate(countlist):
     print("Top words in document {}".format(i + 1))
     scores = {word: tfidf(word, count, countlist) for word in count}
     sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    for word, score in sorted_words[:3]:
+    for word, score in sorted_words[:1000]:
         print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))

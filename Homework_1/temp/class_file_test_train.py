@@ -63,11 +63,11 @@ def eachFile1(filepath):
  
  
 if __name__ == '__main__':
-    filePath,danzi_list = eachFile("E:\\new")
+    filePath,danzi_list = eachFile("E:\\new\\alt.atheism\\")
     for i in danzi_list:
-        path  = 'E:\\new\danzi-train\\' +i
+        path  = 'E:\\new\\danzi-train\\' +i
         mkdir(path)
-        path = 'E:\\new\danzi-test\\' + i
+        path = 'E:\\new\\danzi-test\\' + i
         mkdir(path)
  
     train_pic_dir=[]

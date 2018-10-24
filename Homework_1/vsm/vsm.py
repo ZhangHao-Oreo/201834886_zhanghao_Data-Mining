@@ -17,9 +17,9 @@ Created on Wed Oct 17 00:50:41 2018
 import nltk
 import string
 from nltk.corpus import stopwords     #使用nltk提供的的stopwords
-from nltk.stem.porter import PorterStemmer        # 提取词干
+from nltk.stem.porter import * #PorterStemmer        # 提取词干
 import os
-
+#from collections import Counter
 #------------------------
 
 
@@ -27,7 +27,7 @@ import os
 #text = ("My names is zhanghao ;';'';;' 2 dsdsd playing is zhanghao names name ")
 #filename = ("E:\mytest.txt")
 dirs_path = ("E:\\20news-18828")      #   E:\\new1
-dict = []
+Dict = []
 
 
 #--------------------
@@ -42,7 +42,7 @@ output:tokens [list]
 """
 def get_tokens(text):
     lowers = text.lower()   #大小写
-                            #去除标点符号    
+                            #去除标点符号
     remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
     no_punctuation = lowers.translate(remove_punctuation_map)
     tokens = nltk.word_tokenize(no_punctuation)
@@ -112,7 +112,7 @@ def travel_all_file(dirs_path):
     for fullname in iterbrowse(dirs_path):
         #fullname是绝对路径
         #print fullname 
-        filename=os.path.basename(fullname)
+        #filename=os.path.basename(fullname)
         #filename是目录下的所有文件名
         #print (filename)
         #读文件
@@ -157,8 +157,8 @@ def travel_all_file_build_dict(dirs_path):
     for fullname in iterbrowse(dirs_path):
         #fullname是绝对路径
         #print fullname 
-        filename=os.path.basename(fullname)
-        #filename是目录下的所有文件名
+        #filename=os.path.basename(fullname)
+        #filename是目录下的所有文件名bn 
         #print (filename)
         #读文件
         text = ""
@@ -179,4 +179,8 @@ def travel_all_file_build_dict(dirs_path):
 #规则化每个文本
 travel_all_file(dirs_path)
 
-dict = travel_all_file_build_dict(dirs_path)#dirs_path
+Dict = travel_all_file_build_dict(dirs_path)#dirs_path
+#Dict = str
+write_txt(Dict,"E:\\mytest.txt")
+#text = list(text)
+#i=Counter(text)

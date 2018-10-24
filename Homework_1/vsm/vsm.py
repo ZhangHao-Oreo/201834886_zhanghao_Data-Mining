@@ -17,14 +17,16 @@ Created on Wed Oct 17 00:50:41 2018
 import nltk
 import string
 from nltk.corpus import stopwords     #使用nltk提供的的stopwords
-#from nltk.stem.porter import *        # 提取词干
+from nltk.stem.porter import *        # 提取词干
+import os
+
 #------------------------
 
 
 #--------other------------
-text = ("My names is zhanghao ;';'';;' 2 dsdsd playing ")
-filename = ("E:\mytest.txt")
-
+#text = ("My names is zhanghao ;';'';;' 2 dsdsd playing ")
+#filename = ("E:\mytest.txt")
+dirs_path = ("E:\\20news-18828")      #   E:\\new1
 
 
 #--------------------
@@ -71,13 +73,15 @@ def remove_stopwords(tokens):
     filtered = [w for w in tokens if not w in stopwords.words('english')]   #过滤stopwords
     return filtered
 
+
 def read_txt(filename):
     #读文件
     f = open(filename,'r',errors='ignore')
     text = f.read()
     #去除读取文件后的格式（换行 缩进）
     text = text.replace('\r','').replace('\n','').replace('\t','')
-    f.close()    
+    f.close()
+    return text
 
 def write_txt(text,filename):
     #写文件
@@ -88,11 +92,41 @@ def write_txt(text,filename):
     f.close()
 
 
+"""
+name:iterbrowse
+文件夹路径
+input:path [str]
+"""
+def iterbrowse(path):
+    for home, dirs, files in os.walk(path):
+        for filename in files:
+            yield os.path.join(home, filename)
+"""
+name:dirs_path [str]  根目录路径
+遍历所有文件
+input:i [int] 遍历文件数目
+"""
+def travel_all_file(dirs_path):
+    i = 0
+    for fullname in iterbrowse(dirs_path):
+        #fullname是绝对路径
+        #print fullname 
+        filename=os.path.basename(fullname)
+        #filename是目录下的所有文件名
+        #print (filename)
+        #读文件
+        text = read_txt(fullname)
+        tokens = get_tokens(text)
+        stemmed = stem_tokens(tokens, PorterStemmer())
+        text = remove_stopwords(stemmed)
+        write_txt(text,fullname)        
+        i=i+1
+    return i
+
+
+
 
 #--------------------------------------------------------
 
-tokens = get_tokens(text)
-stemmed = stem_tokens(filtered, PorterStemmer())
-text = remove_stopwords(stemmed)
-write_txt(text,filename)
-
+#规则化每个文本
+travel_all_file(dirs_path)

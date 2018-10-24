@@ -17,16 +17,17 @@ Created on Wed Oct 17 00:50:41 2018
 import nltk
 import string
 from nltk.corpus import stopwords     #使用nltk提供的的stopwords
-from nltk.stem.porter import *        # 提取词干
+from nltk.stem.porter import PorterStemmer        # 提取词干
 import os
 
 #------------------------
 
 
 #--------other------------
-#text = ("My names is zhanghao ;';'';;' 2 dsdsd playing ")
+#text = ("My names is zhanghao ;';'';;' 2 dsdsd playing is zhanghao names name ")
 #filename = ("E:\mytest.txt")
 dirs_path = ("E:\\20news-18828")      #   E:\\new1
+dict = []
 
 
 #--------------------
@@ -121,7 +122,54 @@ def travel_all_file(dirs_path):
         text = remove_stopwords(stemmed)
         write_txt(text,fullname)        
         i=i+1
+        print ("pre_text =",i)
+    print ("SUCCESS file_number =",i)
     return i
+
+
+
+
+"""
+name:build_dict
+input:text [str] 输入单个文本全部内容
+构建词典
+output:dict [str] 
+"""
+def build_dict(text,dict):
+    words_list = str.split(text)
+    for words in words_list:
+    #    for w in words:
+        if words not in dict:
+            dict.append(words)
+    return dict
+
+
+
+
+"""
+name:dirs_path [str]  根目录路径
+遍历所有文件构建词典
+input:i [int] 遍历文件数目
+"""
+def travel_all_file_build_dict(dirs_path):
+    i = 0
+    dict = []
+    for fullname in iterbrowse(dirs_path):
+        #fullname是绝对路径
+        #print fullname 
+        filename=os.path.basename(fullname)
+        #filename是目录下的所有文件名
+        #print (filename)
+        #读文件
+        text = ""
+        text = read_txt(fullname)
+        dict = build_dict(text,dict)
+        i=i+1
+        print ("build_dict =",i)
+        # (dict)
+    print ("\n SUCCESS travel_all_file_build_dict number =",i)
+    return dict
+
 
 
 
@@ -130,3 +178,5 @@ def travel_all_file(dirs_path):
 
 #规则化每个文本
 travel_all_file(dirs_path)
+
+dict = travel_all_file_build_dict(dirs_path)#dirs_path

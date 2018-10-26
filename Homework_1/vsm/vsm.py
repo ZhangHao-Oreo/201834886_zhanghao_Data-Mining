@@ -30,7 +30,7 @@ import shutil  #用于拷贝文件
 #--------other------------
 #text = ("My names is zhanghao ;';'';;' 2 dsdsd playing is zhanghao names name ")
 #filename = ("E:\mytest.txt")
-dirs_path = ("E:\\data_set\\test_set")      #   E:\\new1
+dirs_path = ("E:\\data_set\\train_set")      #   E:\\new1
 Dict = []
 texts = []
 
@@ -99,13 +99,42 @@ def write_txt(text,filename):
 
 
 def wirte_csv(path,text):
-    csvFile = open("E:\\texts.csv", "w",newline='')  # newline=''  存在换行符号问题
+    csvFile = open(path, "w",newline='')  # newline=''  存在换行符号问题
     try:
         writer = csv.writer(csvFile)
-        writer.writerows(texts)
+        writer.writerows(text)
+    except Exception :
+        print("WRITE ERROR")
     finally:
         csvFile.close()
-    
+    return     
+
+
+
+        
+def read_csv(path):
+    csvFile = open(path,'r',encoding="gbk")# 读取以utf-8
+    try:
+        context = csvFile.read() # 读取成str
+        text_line = context.split("\n")#  以回车符\n分割成单独的行
+        #每一行的各个元素是以【,】分割的，因此可以
+        length = len(text_line)
+        for i in range(length):
+            text_line[i-1] = text_line[i-1].split(",")
+    finally:
+        csvFile.close()  
+    return text_line
+     
+
+def read_csv_dict(path):
+    csvFile = open(path,'r',encoding="gbk")# 读取以utf-8
+    try:
+        context = csvFile.read() # 读取成str
+        text_line = context.split("\n")#  以回车符\n分割成单独的行
+        #每一行的各个元素是以【,】分割的，因此可以
+    finally:
+        csvFile.close()  
+    return text_line
 
 
 """
@@ -117,6 +146,10 @@ def iterbrowse(path):
     for home, dirs, files in os.walk(path):
         for filename in files:
             yield os.path.join(home, filename)
+            
+            
+            
+
 """
 name:dirs_path [str]  根目录路径
 遍历所有文件
@@ -142,36 +175,47 @@ def travel_all_file(dirs_path):
         print ("pre_text =",i)
     wirte_csv("E:\\texts.csv",texts)
     print ("SUCCESS file_number =",i)
-    return i
+    return texts
 
 
 
 
 """
 name:build_dict
-input:text [str] 输入单个文本全部内容
+input:text [str] 输入单个文本全部内容  texts [list]   所有文档
 构建词典
 output:dict [str] 
 """
-def build_dict(text,dict):
-    words_list = str.split(text)
-    for words in words_list:
+def build_dict(text,dict,texts):
+    #words_list = str.split(text)
+    words_list = text
+    for words in words_list:    
     #    for w in words:
-        if words not in dict:
-            dict.append(words)
+        if word_in_file_num(texts,words) > 5:
+            if words not in dict:
+                dict.append(words)
+                #print (words)
     return dict
 
 
 
 
 """
-name:dirs_path [str]  根目录路径
+name:texts [list]  所以文件
 遍历所有文件构建词典
 input:i [int] 遍历文件数目
 """
-def travel_all_file_build_dict(dirs_path):
+def travel_all_file_build_dict(texts):
     i = 0
     dict = []
+    for text in texts:
+        dict = build_dict(text,dict,texts)
+        i += 1
+        print ("build_dict =",i)
+    print ("\n SUCCESS travel_all_file_build_dict number =",i)
+    return dict
+
+"""    
     for fullname in iterbrowse(dirs_path):
         #fullname是绝对路径
         #print fullname 
@@ -181,13 +225,12 @@ def travel_all_file_build_dict(dirs_path):
         #读文件
         text = ""
         text = read_txt(fullname)
-        dict = build_dict(text,dict)
+        dict = build_dict(text,dict,texts)
         i=i+1
         print ("build_dict =",i)
         # (dict)
-    print ("\n SUCCESS travel_all_file_build_dict number =",i)
-    return dict
-
+"""
+    
 
 def compute_tf(text,word):
     tf = text.count(word)
@@ -219,6 +262,25 @@ def compute_idf(text,texts,word):
 
 def compute_tf_idf(Dict,texts):
     vectors = []
+    j = 0
+    for text in texts:
+        vector = []
+        #i = 0
+        print ("text_num ",j)
+        j += 1
+        for word in Dict:
+            tf = compute_tf(text,word)
+            idf = compute_idf(text,texts,word)
+            tf_idf = tf * idf
+            #print ("word_num "i)
+            #i += 1 
+            print (tf_idf)
+            vector.append(tf_idf)
+        vectors.append(vector)
+    return vectors
+
+        
+"""        
     for text in texts:
         vector = []
         #i = 0
@@ -231,23 +293,7 @@ def compute_tf_idf(Dict,texts):
             vector.append(tf_idf)
         vectors.append(vector)
     return vectors
-
-        
-        
-        
-    for text in texts:
-        vector = []
-        #i = 0
-        for word in Dict:
-            tf = compute_tf(text,word)
-            idf = compute_idf(text,texts,word)
-            tf_idf = tf * idf
-            #print (i)
-            #i = i+1 
-            vector.append(tf_idf)
-        vectors.append(vector)
-    return vectors
-
+"""
 
 """
 name:init_set
@@ -269,18 +315,22 @@ def init_set(dirs_path = 'E:\\20news-18828',w = 0.98 ):
                 test_file = os.path.join('E:\\data_set\\test_set\\' + dirs, file)
                 shutil.copyfile(os.path.join(files_path, file), test_file)
             i += 1
-   
 
 
 
 #--------------------------------------------------------
 
 #规则化每个文本
-travel_all_file(dirs_path)
+texts = travel_all_file(dirs_path)
 
-Dict = travel_all_file_build_dict(dirs_path)#dirs_path
+Dict = travel_all_file_build_dict(texts)
 #Dict = str
+#Dict = [["asas",2]]
 wirte_csv("E:\\Dict.csv",Dict)
 #text = list(text)
 #i=Counter(text)
+#path = "E:\\Vectors_.csv"
+#texts = read_csv("E:\\texts.csv")
+#Dict = read_csv_dict("E:\\Dict.csv")
 vectors = compute_tf_idf(Dict,texts)
+wirte_csv("E:\\Vectors_.csv",vectors)

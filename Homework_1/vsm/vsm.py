@@ -17,8 +17,12 @@ Created on Wed Oct 17 00:50:41 2018
 import nltk
 import string
 from nltk.corpus import stopwords     #使用nltk提供的的stopwords
-from nltk.stem.porter import * #PorterStemmer        # 提取词干
+from nltk.stem.porter import PorterStemmer        # 提取词干
 import os
+import csv
+import math
+import shutil  #用于拷贝文件
+
 #from collections import Counter
 #------------------------
 
@@ -26,9 +30,9 @@ import os
 #--------other------------
 #text = ("My names is zhanghao ;';'';;' 2 dsdsd playing is zhanghao names name ")
 #filename = ("E:\mytest.txt")
-dirs_path = ("E:\\20news-18828")      #   E:\\new1
+dirs_path = ("E:\\data_set\\test_set")      #   E:\\new1
 Dict = []
-
+texts = []
 
 #--------------------
 
@@ -80,7 +84,7 @@ def read_txt(filename):
     f = open(filename,'r',errors='ignore')
     text = f.read()
     #去除读取文件后的格式（换行 缩进）
-    text = text.replace('\r','').replace('\n','').replace('\t','')
+    text = text.replace('\r',' ').replace('\n',' ').replace('\t',' ')
     f.close()
     return text
 
@@ -91,6 +95,17 @@ def write_txt(text,filename):
     f.write(str)
     text = ""   #将text转化回str类型，并且重置
     f.close()
+
+
+
+def wirte_csv(path,text):
+    csvFile = open("E:\\texts.csv", "w",newline='')  # newline=''  存在换行符号问题
+    try:
+        writer = csv.writer(csvFile)
+        writer.writerows(texts)
+    finally:
+        csvFile.close()
+    
 
 
 """
@@ -109,6 +124,7 @@ input:i [int] 遍历文件数目
 """
 def travel_all_file(dirs_path):
     i = 0
+    
     for fullname in iterbrowse(dirs_path):
         #fullname是绝对路径
         #print fullname 
@@ -120,9 +136,11 @@ def travel_all_file(dirs_path):
         tokens = get_tokens(text)
         stemmed = stem_tokens(tokens, PorterStemmer())
         text = remove_stopwords(stemmed)
+        texts.append(text)
         write_txt(text,fullname)        
         i=i+1
         print ("pre_text =",i)
+    wirte_csv("E:\\texts.csv",texts)
     print ("SUCCESS file_number =",i)
     return i
 
@@ -171,6 +189,87 @@ def travel_all_file_build_dict(dirs_path):
     return dict
 
 
+def compute_tf(text,word):
+    tf = text.count(word)
+    if tf > 0:
+       tf = 1 + math.log(tf)
+    else:
+       tf = 0
+    return tf
+
+"""
+name:word_in_file_num
+input:texts  [list]  所有文本  ,word   [str]  要查的词
+统计出现某词的文档的个数
+output:num  [int] 
+"""
+def word_in_file_num(texts,word):
+    num = 0
+    for text in texts:
+        if text.count(word) >= 1:
+            num += 1
+    return num
+
+
+def compute_idf(text,texts,word):
+    df = word_in_file_num(texts,word)
+    idf = math.log(len(texts) / df)
+    return idf
+
+
+def compute_tf_idf(Dict,texts):
+    vectors = []
+    for text in texts:
+        vector = []
+        #i = 0
+        for word in Dict:
+            tf = compute_tf(text,word)
+            idf = compute_idf(text,texts,word)
+            tf_idf = tf * idf
+            #print (i)
+            #i = i+1 
+            vector.append(tf_idf)
+        vectors.append(vector)
+    return vectors
+
+        
+        
+        
+    for text in texts:
+        vector = []
+        #i = 0
+        for word in Dict:
+            tf = compute_tf(text,word)
+            idf = compute_idf(text,texts,word)
+            tf_idf = tf * idf
+            #print (i)
+            #i = i+1 
+            vector.append(tf_idf)
+        vectors.append(vector)
+    return vectors
+
+
+"""
+name:init_set
+input:dirs_path  [str]   所有数据根目录
+      w [float]    划分为训练集的比例
+划分数据集  
+"""
+def init_set(dirs_path = 'E:\\20news-18828',w = 0.98 ):
+    for dirs in os.listdir(dirs_path):
+        files_path = os.path.join(dirs_path, dirs)
+        os.makedirs('E:\\data_set\\train_set\\' + dirs)
+        os.makedirs('E:\\data_set\\test_set\\' + dirs)
+        i = 0
+        for file in os.listdir(files_path):
+            if i < len(os.listdir(files_path)) * w:
+                train_file = os.path.join('E:\\data_set\\train_set\\' + dirs, file)
+                shutil.copyfile(os.path.join(files_path, file),train_file)
+            else:
+                test_file = os.path.join('E:\\data_set\\test_set\\' + dirs, file)
+                shutil.copyfile(os.path.join(files_path, file), test_file)
+            i += 1
+   
 
 
 
@@ -181,6 +280,7 @@ travel_all_file(dirs_path)
 
 Dict = travel_all_file_build_dict(dirs_path)#dirs_path
 #Dict = str
-write_txt(Dict,"E:\\mytest.txt")
+wirte_csv("E:\\Dict.csv",Dict)
 #text = list(text)
 #i=Counter(text)
+vectors = compute_tf_idf(Dict,texts)

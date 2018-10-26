@@ -45,18 +45,19 @@ def travel_all_file(dirs_path):
 
 
 """
-name:
+name:init_set
 input:dirs_path  [str]   所有数据根目录
-划分数据集
+      w [float]    划分为训练集的比例
+划分数据集  
 """
-def init_set(dirs_path='E:\\20news-18828'):
+def init_set(dirs_path = 'E:\\20news-18828',w = 0.9 ):
     for dirs in os.listdir(dirs_path):
         files_path = os.path.join(dirs_path, dirs)
         os.makedirs('E:\\train_set\\' + dirs)
         os.makedirs('E:\\test_set\\' + dirs)
         i = 0
         for file in os.listdir(files_path):
-            if i < len(os.listdir(files_path)) * 0.9:
+            if i < len(os.listdir(files_path)) * w:
                 train_file = os.path.join('E:\\train_set\\' + dirs, file)
                 shutil.copyfile(os.path.join(files_path, file),train_file)
             else:

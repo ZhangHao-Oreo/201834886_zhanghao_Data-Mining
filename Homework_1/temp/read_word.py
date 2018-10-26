@@ -104,7 +104,7 @@ for fullname in iterbrowse("E:\\20news-18828"):
     print (filename)
     f = open(fullname,'r',errors='ignore')
     text = f.read()
-    text = text.replace('\r','').replace('\n','').replace('\t','')
+    text = text.replace('\r',' ').replace('\n',' ').replace('\t',' ')
     f.close()
     tokens = get_tokens(text)
     filtered = [w for w in tokens if not w in stopwords.words('english')]

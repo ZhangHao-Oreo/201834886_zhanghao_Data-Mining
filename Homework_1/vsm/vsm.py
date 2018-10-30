@@ -59,10 +59,10 @@ input:tokens [list]
 提取词干
 output:stemmed [list]
 """
-def stem_tokens(tokens, stemmer):
+def stem_tokens(tokens, PorterStemmer):
     stemmed = []
     for item in tokens:
-        stemmed.append(stemmer.stem(item))
+        stemmed.append(PorterStemmer.stem(item))
     return stemmed
 
 
@@ -191,10 +191,13 @@ def build_dict(text,dict,texts):
     words_list = text
     for words in words_list:    
     #    for w in words:
-        if word_in_file_num(texts,words) > 5:
-            if words not in dict:
-                dict.append(words)
-                #print (words)
+        length_words = len(words)
+        if length_words > 3 and length_words < 9:
+            if text.count(words) > 3:
+                #    if word_in_file_num(texts,words) > 5:
+                if words not in dict:
+                    dict.append(words)
+                    #print (words)
     return dict
 
 
@@ -254,14 +257,26 @@ def word_in_file_num(texts,word):
     return num
 
 
-def compute_idf(text,texts,word):
-    df = word_in_file_num(texts,word)
-    idf = math.log(len(texts) / df)
+def compute_idf(texts,word,Dict_full):
+    idf = math.log(len(texts) / Dict_full[word])
     return idf
 
 
+
+def compute_df(texts,Dict):
+    Dict_full = dict()
+    i = 0
+    for word in Dict:
+        print ("word_tf " ,i)
+        i += 1
+        df = word_in_file_num(texts,word) 
+        Dict_full[word] = df
+    return Dict_full
+
 def compute_tf_idf(Dict,texts):
     vectors = []
+    Dict_full = []
+    Dict_full = compute_df(texts,Dict)
     j = 0
     for text in texts:
         vector = []
@@ -270,11 +285,11 @@ def compute_tf_idf(Dict,texts):
         j += 1
         for word in Dict:
             tf = compute_tf(text,word)
-            idf = compute_idf(text,texts,word)
+            idf = compute_idf(texts,word,Dict_full)
             tf_idf = tf * idf
             #print ("word_num "i)
             #i += 1 
-            print (tf_idf)
+            #print (tf_idf)
             vector.append(tf_idf)
         vectors.append(vector)
     return vectors
@@ -334,3 +349,8 @@ wirte_csv("E:\\Dict.csv",Dict)
 #Dict = read_csv_dict("E:\\Dict.csv")
 vectors = compute_tf_idf(Dict,texts)
 wirte_csv("E:\\Vectors_.csv",vectors)
+
+
+
+import sys
+sys.exit()

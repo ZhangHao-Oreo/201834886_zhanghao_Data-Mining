@@ -296,12 +296,12 @@ def build_dict(text,dict_tmp,texts):
     words_list = text
     for words in words_list:    
     #    for w in words:
-        length_words = len(words)
-        if length_words > 3 and length_words < 14:
+        #length_words = len(words)
+        #if length_words > 3 and length_words < 14:
             #if text.count(words) > 1:
                 #    if word_in_file_num(texts,words) > 5:
-           if words not in dict_tmp:
-               dict_tmp.append(words)
+        if words not in dict_tmp:
+            dict_tmp.append(words)
                     #print (words)
     return dict_tmp
 

@@ -16,6 +16,7 @@ import sys
 sys.path.append('C:\\Users\\zh_lab\\Documents\\GitHub\\201834886_zhanghao_Data-Mining\\Homework_1\\vsm') 
 import vsm 
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 #from scipy.spatial.distance import pdist
 
 
@@ -74,9 +75,10 @@ Knn_out = []
 """
 def Euclidean_Distance(x,y):    
 # solution1
-    dist = np.linalg.norm( x - y ) 
+    #dist = np.linalg.norm( x - y ) 
 # solution2
     #dist = np.sqrt(np.sum(np.square(x - y))) 
+    dist = 1.0/(1.0+la.norm(x-y))
     return dist
 
 
@@ -85,10 +87,39 @@ def Euclidean_Distance(x,y):
 """
 def Cosine_Distance(x,y):     
     # solution1
-    dist = 1 - np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y))    
+    #dist = 1 - np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y))    
     # solution2
     #dist = pdist(np.vstack([x,y]),'cosine')
+    #return dist
+    x = np.mat(x)
+    y = np.mat(y)
+    num = float(x * y.T)
+    denom = np.linalg.norm(x) * np.linalg.norm(y)
+    cos = num / denom
+    dist = 0.5 + 0.5 * cos
     return dist
+
+
+from numpy import linalg as la
+ 
+#欧式距离
+def euclidSimilar(inA,inB):
+    return 1.0/(1.0+la.norm(inA-inB))
+
+#皮尔逊相关系数
+def pearsonSimilar(inA,inB):
+    if len(inA)<3:
+        return 1.0
+    return 0.5+0.5*np.corrcoef(inA,inB,rowvar=0)[0][1]
+"""
+#余弦相似度
+def cosSimilar(inA,inB):
+    inA=np.mat(inA)
+    inB=np.mat(inB)
+    num=float(inA*inB.T)
+    denom=la.norm(inA)*la.norm(inB)
+    return 0.5+0.5*(num/denom)
+"""
 
 
 
@@ -115,29 +146,38 @@ def compute_tf_idf_test(Dict,texts,Dict_full):
 
 train = Vectors_TF_IDF
 train_label = Label
-test = Vectors_TF_IDF_test[1] 
+test_label = Label_test 
+test_v = Vectors_TF_IDF_test[73]
+test = Vectors_TF_IDF_test
+k = 20
+
+Cosine_Distance(np.array(Vectors_TF_IDF_test[74]),np.array(Vectors_TF_IDF_test[73]))
 """
-def knn(train, train_label, test,k):
+def knn(train, train_label, test_v,k):
 #    print("KNN")
     tmp_list = []
     i = 0
     for train_v in train:
-        test = np.array(test)
+        test_v = np.array(test_v)
         train_v = np.array(train_v)
-        #dist = Euclidean_Distance(test,train_v)
-        dist = Cosine_Distance(test,train_v)
-        tmp_list.append([Label[i],dist])
+        #dists = Euclidean_Distance(test_v,train_v)
+        dists = Cosine_Distance(test_v,train_v)
+        tmp_list.append([Label[i],dists])
         i += 1
     tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=False)
     tmp_list = tmp_list[0:k]    
-    Dict_list = []
-    for i in range(len(tmp_list)):
-        tmp_list[i][0]
-        if tmp_list[i][0] not in Dict_list:
-            Dict_list.append(tmp_list[i][0])
-    top_label = Dict_list[0]
+    Dict_list_knn = []
+    for tmp_list_i in range(len(tmp_list)):
+        tmp_list[tmp_list_i][0]
+        if tmp_list[tmp_list_i][0] not in Dict_list_knn:
+            Dict_list_knn.append(tmp_list[tmp_list_i][0])
+    top_label = Dict_list_knn[0]
     top_num = 0
-    for Dict_list_i in Dict_list:
+    tmp_list_tmp = []
+    for tmp_list_i in range(k):
+        tmp_list_tmp.append(tmp_list [tmp_list_i][0])
+    tmp_list = tmp_list_tmp
+    for Dict_list_i in Dict_list_knn:
         if tmp_list.count(Dict_list_i) > top_num:
             top_label = Dict_list_i
     return top_label
@@ -160,6 +200,7 @@ test_label[0:20] = Label [15:25]
 def judge_dataset(train, train_label, test,test_label,k):
     knn_out = []
     num_test = 0
+    print ("k = ",k)
     for test_i in test:
         print (num_test)
         tmp_label_knn = knn(train, train_label, test_i,k)
@@ -167,6 +208,7 @@ def judge_dataset(train, train_label, test,test_label,k):
         num_test += 1
     if len(test_label) == len(knn_out):
         error_num = 0
+        i = 0
         for i in range(len(test_label)):
             if test_label[i]!=knn_out[i]:
                 error_num += 1
@@ -199,6 +241,14 @@ if __name__ == '__main__':
 #    Dict = vsm.process_str(Dict)
 #计算TF-IDF
     Dict_full = vsm.compute_df(Texts,Dict)
+    Dict = []
+    tmp_Dict_full = dict()
+    for Dict_full_i in Dict_full:
+        t = Dict_full[Dict_full_i]
+        if t > 3:
+            Dict.append(Dict_full_i)
+            tmp_Dict_full[Dict_full_i] = t
+    Dict_full = tmp_Dict_full        
     vsm.record (tmp_Dict_full,"Other",Dict_full)
 #    Dict_full = read_csv(tmp_Dict_full)
     Vectors_TF_IDF = vsm.compute_tf_idf(Dict,Texts,Dict_full)
@@ -217,5 +267,5 @@ if __name__ == '__main__':
 #    Vectors_TF_IDF_test = read_csv(tmp_TF_IDF_test)
 
 #KNN
-    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,15)
-
+    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,30)
+#    similarity = cosine_similarity(vsm_train,vsm_test)

@@ -1,0 +1,224 @@
+[33mcommit b903882693b427cf9e3559ea55705c8b369b844d[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Sat Nov 3 21:09:48 2018 +0800
+
+    Revert "2018_10_30_(commit_13)"
+    
+    This reverts commit d8c68c2e645114101a9c732d8e6c9736204a33ad.
+
+[33mcommit fbe8fd926a71084ebf60ad40551629b63fc07e77[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Sat Nov 3 20:27:14 2018 +0800
+
+    Revert "Revert "2018_10_30_(commit_13)""
+    
+    This reverts commit 5bde20b196e16f88236d6207300f282701070d2e.
+    
+    Signed-off-by: zhanghao <zh4869zh@gmail.com>
+
+[33mcommit 5bde20b196e16f88236d6207300f282701070d2e[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Sat Nov 3 20:13:06 2018 +0800
+
+    Revert "2018_10_30_(commit_13)"
+    
+    This reverts commit d8c68c2e645114101a9c732d8e6c9736204a33ad.
+
+[33mcommit 2e6025fc3f0d83d43ba6cdf108d9e735404b587d[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Sat Nov 3 20:11:40 2018 +0800
+
+    2018_11_3_(commit_16)
+    
+    划分数据集 测试集 训练集
+    调整函数调用顺序
+
+[33mcommit 9f6aa978bbe9ccd5595cf3e4c9a94ef464afa135[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Fri Nov 2 23:22:29 2018 +0800
+
+    2018_11_12_(commit_15)
+    
+    使用余弦与欧式距离两种方法计算KNN
+    编写了错误率统计函数
+
+[33mcommit 092407c53dcd23129dd554971265cf97c14b1942[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Thu Nov 1 22:33:29 2018 +0800
+
+    2018_11_1_(commit_14)
+    
+    KNN label
+
+[33mcommit d8c68c2e645114101a9c732d8e6c9736204a33ad[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Tue Oct 30 16:55:43 2018 +0800
+
+    2018_10_30_(commit_13)
+    
+    用于存储过程文件，方便调试。
+
+[33mcommit 3e4f2ac34f8a2bd480e6130d3dae64d550415c50[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Tue Oct 30 16:52:49 2018 +0800
+
+    2018_10_18_(commit_13)
+    
+    一种改进的的tf-idf 计算方法 可以使原有的计算速度提高n^2倍
+
+[33mcommit ef94750cde0092c450848ba3c99440ab7e382e6e[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Fri Oct 26 22:05:31 2018 +0800
+
+    2018_10_26_(commit_12)
+    
+    TF-IDF计算量太大，所以通过减少词典中word的数量来减少计算TF-IIDF的运算。在创建词典时，将word在全部文档出现的次数做统计，如果总出现次数小于5则剔除。以此来过滤一些全文仅出现几次的专有名词或者时姓名等信息。
+
+[33mcommit de0faa9b0d676e83e68c8dbb0151b74285b84a2a[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Fri Oct 26 13:14:46 2018 +0800
+
+    2018_10_26_(commit_11)
+    
+    将词典存为csv文件，因为txt格式有些问题。增加计算tf-idf函数。但是由于词典数量太大导致计算任务过多，(使用部分数据做测试，词典数量1.8w 每个文档计算tf-idf的话计算次数约为 files_num * 1.8w) 所以下一步将想办法缩减词典数量。
+
+[33mcommit d51e5486c759e50f458b753cdb005fcecf971aca[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Thu Oct 25 22:27:54 2018 +0800
+
+    2018_10_25_(commit_10)
+    
+    划分数据集和测试集90%训练集10%测试集
+
+[33mcommit 351d00bb1065f83ef25d18c42257531a42d430fb[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Thu Oct 25 00:23:05 2018 +0800
+
+    2018_10_25_(commit_9)
+    
+    增加词典后在统计词频时之前代码remove_punctuation_map = dict((ord(char), None) for char in string.punctuation) 因格式问题报错，修正了因为变量名称重复而引发的type问题
+
+[33mcommit bdcd90fb1285276853cb3b1550f5b3fde75f68c9[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 24 13:27:16 2018 +0800
+
+    2018_10_24_(commit_8)
+    
+    构建词典_数据集和测试集还没有划分_先实验程序是否正确
+
+[33mcommit 186bbba78c3f01a722e21110425f56963ef14fdf[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 24 12:40:41 2018 +0800
+
+    2018_10_24_(commit_7)
+    
+    规则化每个文本
+
+[33mcommit 9593c05497e113e98c76292ec1a41b7c6477b7bd[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 24 02:17:01 2018 +0800
+
+    2018_10_24_(commit_6)
+    
+    整理代码，形成完整的简单的demo
+    分为两个文件夹vsm和knn
+    vsm下vsm为主要代码
+    init_set用于处理数据集文件
+
+[33mcommit 1edc731190e59eeba19975b7a7404d485c2455bf[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Tue Oct 23 12:40:01 2018 +0800
+
+    2018_10_23_(commit_5)
+    
+    整理文件夹
+
+[33mcommit 22f2917c6ad74cd111443afac0de36102911b27b[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Sat Oct 20 00:18:23 2018 +0800
+
+    划分数据集为测试集和训练集
+    
+    划分数据集为测试集和训练集
+
+[33mcommit 862d33b620f57569e2b1ee52ce8e3eca091411d0[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Fri Oct 19 15:10:59 2018 +0800
+
+    整理
+
+[33mcommit 9d2e900f55b469125abfe4bbea949c686cf95573[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Thu Oct 18 08:54:43 2018 +0800
+
+    预读取词汇量
+
+[33mcommit 84969ac71ae2e26ee938efae67721ef9bf18ff03[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Thu Oct 18 01:16:17 2018 +0800
+
+    在测试数据上基本实现vsm
+    
+    使用给定text 和简单的内容实现其功能，还需要在给定数据集上进行修改
+
+[33mcommit 0c862ed23d1359739c2473c727236455ac12040a[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Thu Oct 18 00:57:08 2018 +0800
+
+    ntlk
+    
+    递归读取文件夹下全部内容
+
+[33mcommit c533b235ebce2bd15b5d1b38ea14b8f7728825d2[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Thu Oct 18 00:03:44 2018 +0800
+
+    nltk
+    
+    tf-idf方法完成  文件访问存在问题
+
+[33mcommit 64c5444dd5d5e856fffc164baaa4d9a5b92d0bab[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 17 23:09:57 2018 +0800
+
+    使用nltk库实现
+
+[33mcommit 0bc1716267f68164068c87a28b21ec3684d76093[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 17 21:00:39 2018 +0800
+
+    成功读取文档内容
+
+[33mcommit 71daadd61aed85a4b79c74f67293eff7787f838d[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 17 20:36:58 2018 +0800
+
+    read_words
+
+[33mcommit feb14375d8e5602486fc3aaed306caa3f6478e83[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 17 19:57:02 2018 +0800
+
+    过滤复数词
+
+[33mcommit f01ea2005f2be5c22bb6e099f08fc69f793ae290[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 17 19:31:45 2018 +0800
+
+    stopword
+    
+    stopword
+
+[33mcommit 71657a7de7ca0102532cf964f917ac16101b6fa2[m
+Author: zhanghao <zh4869zh@gmail.com>
+Date:   Wed Oct 17 00:43:57 2018 +0800
+
+    尝试使用textbolb
+    
+    调试python环境，导入textbolb库。上传数据集。
+
+[33mcommit c9a18c39cc8e0ca3af51d3a0a827fa40ac761e14[m
+Author: ZhangHao-Oreo <43611274+ZhangHao-Oreo@users.noreply.github.com>
+Date:   Tue Oct 9 18:37:58 2018 +0800
+
+    Initial commit

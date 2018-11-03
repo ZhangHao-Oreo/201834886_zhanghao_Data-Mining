@@ -22,6 +22,8 @@ import os
 import csv
 import math
 import shutil  #用于拷贝文件
+import time
+
 
 #from collections import Counter
 #------------------------
@@ -30,11 +32,62 @@ import shutil  #用于拷贝文件
 #--------other------------
 #text = ("My names is zhanghao ;';'';;' 2 dsdsd playing is zhanghao names name ")
 #filename = ("E:\mytest.txt")
-dirs_path = ("E:\\data_set\\train_set")      #   E:\\new1
+"""
+dirs_path = "E:\\20news-18828"
+file_dir_train = "E:\\data_set_1\\train_set\\"
+file_dir_test = "E:\\data_set_1\\test_set\\"
+"""
+
+
+#测试路径
+"""
+dirs_path = "E:\\data_set_1\\test_set"
+file_dir_train = "E:\\data_set_2\\train_set"
+file_dir_test = "E:\\data_set_2\\test_set"
+
+
+tmp_texts = "E:\\tmp\\Texts.csv"
+tmp_label = "E:\\tmp\\Label.csv"
+tmp_Dict = "E:\\tmp\\Dict.csv"
+tmp_TF_IDF = "E:\\tmp\\TF_IDF.csv"
+"""
+
+
+
+"""
+dirs_path = "E:\\20news-18828"
+file_dir_train = "E:\\data_set_1\\train_set"
+file_dir_test = "E:\\data_set_1\\test_set"
+
+
+tmp_texts = "E:\\real\\Texts.csv"
+tmp_label = "E:\\real\\Label.csv"
+tmp_Dict = "E:\\real\\Dict.csv"
+tmp_TF_IDF = "E:\\real\\TF_IDF.csv"
+
+file_w = 0.98
+                
 Dict = []
-texts = []
+Texts = []
+Label = []
+Vectors_TF_IDF = []
+Dict_idf = []
+"""
 
 #--------------------
+
+dirs_path = "E:\\20news-18828"
+file_dir_train = "E:\\data_set_1\\train_set"
+file_dir_test = "E:\\data_set_1\\test_set"
+
+
+tmp_texts = "E:\\real\\Texts.csv"
+tmp_label = "E:\\real\\Label.csv"
+tmp_Dict = "E:\\real\\Dict.csv"
+tmp_TF_IDF = "E:\\real\\TF_IDF.csv"
+tmp_Label_test = "E:\\real\\Label_test.csv"
+tmp_Texts_test = "E:\\real\\Tests_test.csv"
+file_w = 0.98
 
 #-----------------------functions-------------------
 
@@ -59,10 +112,10 @@ input:tokens [list]
 提取词干
 output:stemmed [list]
 """
-def stem_tokens(tokens, PorterStemmer):
+def stem_tokens(tokens,Stemmer):
     stemmed = []
     for item in tokens:
-        stemmed.append(PorterStemmer.stem(item))
+        stemmed.append(Stemmer.stem(item))
     return stemmed
 
 
@@ -126,6 +179,23 @@ def read_csv(path):
     return text_line
      
 
+"""
+name:process_str
+input: List [list]  待处理的字符
+output: 
+"""
+
+
+def process_str(List):
+    for i in range (len(List)):
+        tmp_str = str(List[i])
+        tmp_str = tmp_str.replace(',','').replace('[','').replace(']','').replace('\'','').replace(' ','')
+        List[i] = tmp_str
+    return List
+
+
+
+
 def read_csv_dict(path):
     csvFile = open(path,'r',encoding="gbk")# 读取以utf-8
     try:
@@ -155,50 +225,85 @@ name:dirs_path [str]  根目录路径
 遍历所有文件
 input:i [int] 遍历文件数目
 """
-def travel_all_file(dirs_path):
-    i = 0
-    
-    for fullname in iterbrowse(dirs_path):
+def travel_all_file(Dirs_path):
+    print (Dirs_path)
+    start = time.time()
+    texts =[]
+    label = []
+    print ("将规则化的词读入内存_并保存临时文件")
+#    i = 0
+    for fullname in iterbrowse(Dirs_path):
         #fullname是绝对路径
         #print fullname 
         #filename=os.path.basename(fullname)
         #filename是目录下的所有文件名
         #print (filename)
         #读文件
+        file_label = fullname.split("\\")
+        file_label = file_label[(len(file_label)-1)-1]
         text = read_txt(fullname)
         tokens = get_tokens(text)
         stemmed = stem_tokens(tokens, PorterStemmer())
         text = remove_stopwords(stemmed)
         texts.append(text)
-        write_txt(text,fullname)        
-        i=i+1
-        print ("pre_text =",i)
-    wirte_csv("E:\\texts.csv",texts)
-    print ("SUCCESS file_number =",i)
-    return texts
+        label.append(file_label)
+#        write_txt(text,fullname)        
+#        i=i+1
+#        print ("pre_text =",i)
+    
+    print ("________OK")
+    end = time.time()
+    print (end-start ,"s")
+    return texts,label
 
-
-
+"""
+name:记录数据
+input:path [str]  文件路径  flag [str] 操作类型  content  [list]  输入内容 
+"""
+def record (path,flag,content):
+    if flag == "Texts":
+        wirte_csv(tmp_texts ,content)
+        print ("写入 Tests 成功 ")
+    if flag == "Label":
+        wirte_csv(tmp_label ,content)
+        print ("写入 Label 成功 ")
+    if flag == "Dict":
+        wirte_csv(tmp_Dict ,content)
+        print ("写入 Dict 成功 ")
+    if flag == "TF_IDF":
+        wirte_csv(tmp_TF_IDF,content)
+        print ("写入 TF_IDF 成功 ")
+    if flag == "Texts_test" :
+        wirte_csv(tmp_Texts_test ,content)
+        print ("写入 Tests_test 成功 ")
+    if flag == "Label_test":
+        wirte_csv(tmp_Label_test ,content)
+        print ("写入 Label_test 成功 ")
+    if flag == "Other":
+        wirte_csv(path ,content)
+        print ("写入 Other 成功 ")
+    
+    
 
 """
 name:build_dict
 input:text [str] 输入单个文本全部内容  texts [list]   所有文档
 构建词典
-output:dict [str] 
+output:dict_tmp [str] 
 """
-def build_dict(text,dict,texts):
+def build_dict(text,dict_tmp,texts):
     #words_list = str.split(text)
     words_list = text
     for words in words_list:    
     #    for w in words:
         length_words = len(words)
-        if length_words > 3 and length_words < 9:
-            if text.count(words) > 3:
+        if length_words > 3 and length_words < 14:
+            if text.count(words) > 2:
                 #    if word_in_file_num(texts,words) > 5:
-                if words not in dict:
-                    dict.append(words)
+                if words not in dict_tmp:
+                    dict_tmp.append(words)
                     #print (words)
-    return dict
+    return dict_tmp
 
 
 
@@ -209,14 +314,18 @@ name:texts [list]  所以文件
 input:i [int] 遍历文件数目
 """
 def travel_all_file_build_dict(texts):
-    i = 0
-    dict = []
+    start = time.time()
+#    i = 0  
+    dict_tmp = []
     for text in texts:
-        dict = build_dict(text,dict,texts)
-        i += 1
-        print ("build_dict =",i)
-    print ("\n SUCCESS travel_all_file_build_dict number =",i)
-    return dict
+        dict_tmp = build_dict(text,dict_tmp,texts)
+#        i += 1
+#        print ("build_dict =",i)
+#    print ("\n SUCCESS travel_all_file_build_dict number =",i)
+    end = time.time()
+    print ("构建词典____ok")
+    print (end-start ,"s")
+    return dict_tmp
 
 """    
     for fullname in iterbrowse(dirs_path):
@@ -265,34 +374,38 @@ def compute_idf(texts,word,Dict_full):
 
 def compute_df(texts,Dict):
     Dict_full = dict()
-    i = 0
+#    i = 0
     for word in Dict:
-        print ("word_tf " ,i)
-        i += 1
+#        print ("word_tf " ,i)
+#        i += 1
         df = word_in_file_num(texts,word) 
         Dict_full[word] = df
     return Dict_full
 
-def compute_tf_idf(Dict,texts):
+
+
+
+
+def compute_tf_idf(Dict,texts,Dict_full):
+    print ("计算TF-IDF")
+    star = time.time()
     vectors = []
-    Dict_full = []
-    Dict_full = compute_df(texts,Dict)
-    j = 0
     for text in texts:
         vector = []
-        #i = 0
-        print ("text_num ",j)
-        j += 1
         for word in Dict:
             tf = compute_tf(text,word)
             idf = compute_idf(texts,word,Dict_full)
             tf_idf = tf * idf
-            #print ("word_num "i)
-            #i += 1 
-            #print (tf_idf)
+            tf_idf = int(tf_idf+0.5)
             vector.append(tf_idf)
         vectors.append(vector)
+    end = time.time()
+    print (end-star)
+    print ("计算TF-IDF____OK")
+
     return vectors
+
+
 
         
 """        
@@ -316,41 +429,24 @@ input:dirs_path  [str]   所有数据根目录
       w [float]    划分为训练集的比例
 划分数据集  
 """
-def init_set(dirs_path = 'E:\\20news-18828',w = 0.98 ):
+def init_set(dirs_path,w = 0.98 ):
+    start = time.time()
+    print ("划分数据集 ")
     for dirs in os.listdir(dirs_path):
         files_path = os.path.join(dirs_path, dirs)
-        os.makedirs('E:\\data_set\\train_set\\' + dirs)
-        os.makedirs('E:\\data_set\\test_set\\' + dirs)
+        os.makedirs(file_dir_train + "\\" + dirs)
+        os.makedirs(file_dir_test + "\\" + dirs)
         i = 0
         for file in os.listdir(files_path):
             if i < len(os.listdir(files_path)) * w:
-                train_file = os.path.join('E:\\data_set\\train_set\\' + dirs, file)
+                train_file = os.path.join(file_dir_train + "\\" + dirs, file)
                 shutil.copyfile(os.path.join(files_path, file),train_file)
             else:
-                test_file = os.path.join('E:\\data_set\\test_set\\' + dirs, file)
+                test_file = os.path.join(file_dir_test + "\\" + dirs, file)
                 shutil.copyfile(os.path.join(files_path, file), test_file)
             i += 1
+    end = time.time()
+    print ("划分数据集____OK")
+    print (end-start ,"s")
 
 
-
-#--------------------------------------------------------
-
-#规则化每个文本
-texts = travel_all_file(dirs_path)
-
-Dict = travel_all_file_build_dict(texts)
-#Dict = str
-#Dict = [["asas",2]]
-wirte_csv("E:\\Dict.csv",Dict)
-#text = list(text)
-#i=Counter(text)
-#path = "E:\\Vectors_.csv"
-#texts = read_csv("E:\\texts.csv")
-#Dict = read_csv_dict("E:\\Dict.csv")
-vectors = compute_tf_idf(Dict,texts)
-wirte_csv("E:\\Vectors_.csv",vectors)
-
-
-
-import sys
-sys.exit()

@@ -160,7 +160,7 @@ def judge_dataset(train, train_label, test,test_label):
     num_test = 0
     for test_i in test:
         print (num_test)
-        tmp_label_knn = knn(train, train_label, test_i,k = 50)
+        tmp_label_knn = knn(train, train_label, test_i,k = 15)
         knn_out.append(tmp_label_knn)   
         num_test += 1
     if len(test_label) == len(knn_out):

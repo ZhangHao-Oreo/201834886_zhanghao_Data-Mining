@@ -42,7 +42,7 @@ file_w = 0.7
 dirs_path = "E:\\data_set_3\\test_set"
 file_dir_train = "E:\\data_set_4\\train_set"
 file_dir_test = "E:\\data_set_4\\test_set"
-file_w = 0.7
+file_w = 0.9
 
 """
 
@@ -120,10 +120,10 @@ def knn(train, train_label, test,k = 15):
     tmp_list = []
     i = 0
     for train_v in train:
-        #dist = Cosine_Distance(test,train_v)
         test = np.array(test)
         train_v = np.array(train_v)
-        dist = Euclidean_Distance(test,train_v)
+        #dist = Euclidean_Distance(test,train_v)
+        dist = Cosine_Distance(test,train_v)
         tmp_list.append([Label[i],dist])
         i += 1
     tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=False)
@@ -160,7 +160,7 @@ def judge_dataset(train, train_label, test,test_label):
     num_test = 0
     for test_i in test:
         print (num_test)
-        tmp_label_knn = knn(train, train_label, test_i,k = 15)
+        tmp_label_knn = knn(train, train_label, test_i,k = 7)
         knn_out.append(tmp_label_knn)   
         num_test += 1
     if len(test_label) == len(knn_out):

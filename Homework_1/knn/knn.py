@@ -37,6 +37,13 @@ file_dir_train = "E:\\data_set_3\\train_set"
 file_dir_test = "E:\\data_set_3\\test_set"
 file_w = 0.7
 
+
+
+dirs_path = "E:\\data_set_3\\test_set"
+file_dir_train = "E:\\data_set_4\\train_set"
+file_dir_test = "E:\\data_set_4\\test_set"
+file_w = 0.7
+
 """
 
 tmp_texts = "E:\\real\\Texts.csv"
@@ -102,15 +109,21 @@ def compute_tf_idf_test(Dict,texts,Dict_full):
     print ("计算测试集TF-IDF____OK")
     return vectors
 
+"""
 
-
-
-def knn(train, train_label, test,k = 30):
+train = Vectors_TF_IDF
+train_label = Label
+test = Vectors_TF_IDF_test[1] 
+"""
+def knn(train, train_label, test,k = 15):
 #    print("KNN")
     tmp_list = []
     i = 0
     for train_v in train:
-        dist = Cosine_Distance(test,train_v)
+        #dist = Cosine_Distance(test,train_v)
+        test = np.array(test)
+        train_v = np.array(train_v)
+        dist = Euclidean_Distance(test,train_v)
         tmp_list.append([Label[i],dist])
         i += 1
     tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=False)
@@ -147,7 +160,7 @@ def judge_dataset(train, train_label, test,test_label):
     num_test = 0
     for test_i in test:
         print (num_test)
-        tmp_label_knn = knn(train, train_label, test_i,k = 30)
+        tmp_label_knn = knn(train, train_label, test_i,k = 50)
         knn_out.append(tmp_label_knn)   
         num_test += 1
     if len(test_label) == len(knn_out):
@@ -185,7 +198,7 @@ if __name__ == '__main__':
 #计算TF-IDF
     Dict_full = vsm.compute_df(Texts,Dict)
     vsm.record (tmp_Dict_full,"Other",Dict_full)
-#    Dict_full = read_csv(tmp_Dict_full)   
+#    Dict_full = read_csv(tmp_Dict_full)
     Vectors_TF_IDF = vsm.compute_tf_idf(Dict,Texts,Dict_full)
     vsm.record ("path","TF_IDF",Vectors_TF_IDF)
 #    Vectors_TF_IDF = read_csv(tmp_TF_IDF)

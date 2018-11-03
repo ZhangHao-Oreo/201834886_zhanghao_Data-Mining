@@ -67,6 +67,8 @@ Label_test = []
 Dict_full = []
 Knn_out = []
 
+
+
 """
 欧几里得距离(Euclidean Distance)
 """
@@ -115,7 +117,7 @@ train = Vectors_TF_IDF
 train_label = Label
 test = Vectors_TF_IDF_test[1] 
 """
-def knn(train, train_label, test,k = 15):
+def knn(train, train_label, test,k):
 #    print("KNN")
     tmp_list = []
     i = 0
@@ -155,12 +157,12 @@ test_label[0:20] = Label [15:25]
 
 
 
-def judge_dataset(train, train_label, test,test_label):
+def judge_dataset(train, train_label, test,test_label,k):
     knn_out = []
     num_test = 0
     for test_i in test:
         print (num_test)
-        tmp_label_knn = knn(train, train_label, test_i,k = 7)
+        tmp_label_knn = knn(train, train_label, test_i,k)
         knn_out.append(tmp_label_knn)   
         num_test += 1
     if len(test_label) == len(knn_out):
@@ -180,7 +182,7 @@ def judge_dataset(train, train_label, test,test_label):
 if __name__ == '__main__':
 
 
-    
+
 #划分数据集
 #    init_set(dirs_path,file_w)    
 #规则化每个文本
@@ -215,5 +217,5 @@ if __name__ == '__main__':
 #    Vectors_TF_IDF_test = read_csv(tmp_TF_IDF_test)
 
 #KNN
-    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test)
+    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,15)
 

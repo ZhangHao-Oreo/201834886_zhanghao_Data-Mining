@@ -75,7 +75,7 @@ Dict_idf = []
 """
 
 #--------------------
-
+"""
 dirs_path = "E:\\20news-18828"
 file_dir_train = "E:\\data_set_1\\train_set"
 file_dir_test = "E:\\data_set_1\\test_set"
@@ -88,7 +88,7 @@ tmp_TF_IDF = "E:\\real\\TF_IDF.csv"
 tmp_Label_test = "E:\\real\\Label_test.csv"
 tmp_Texts_test = "E:\\real\\Tests_test.csv"
 file_w = 0.98
-
+"""
 #-----------------------functions-------------------
 
 """
@@ -298,10 +298,10 @@ def build_dict(text,dict_tmp,texts):
     #    for w in words:
         length_words = len(words)
         if length_words > 3 and length_words < 14:
-            if text.count(words) > 2:
+            #if text.count(words) > 1:
                 #    if word_in_file_num(texts,words) > 5:
-                if words not in dict_tmp:
-                    dict_tmp.append(words)
+           if words not in dict_tmp:
+               dict_tmp.append(words)
                     #print (words)
     return dict_tmp
 

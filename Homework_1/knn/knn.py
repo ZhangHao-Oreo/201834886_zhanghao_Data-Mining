@@ -217,9 +217,10 @@ def judge_dataset(train, train_label, test,test_label,k):
             top_label = eq_labe(tmp_list,k_i)
             if test_label[num_test] != top_label:
                 error[k_i] += 1
+#                print (k_i,"    " error[k_i])
         num_test += 1
     for k_i in range(3,k):
-        print (k_i," error = ",error[k_i] )
+        print (" K取 ",k_i, "时 正确率为 = ",1-error[k_i]/len(test_label) )
         
 
 
@@ -295,3 +296,4 @@ if __name__ == '__main__':
 #KNN
     Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,40)
 #    similarity = cosine_similarity(vsm_train,vsm_test)
+    judge_dataset(vsm_train, Label,vsm_test,Label_test,40)

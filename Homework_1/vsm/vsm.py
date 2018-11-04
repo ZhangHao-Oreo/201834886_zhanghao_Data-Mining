@@ -18,7 +18,6 @@ import nltk
 import string
 from nltk.corpus import stopwords     #使用nltk提供的的stopwords
 from nltk.stem.porter import PorterStemmer        # 提取词干
-Stemmer = PorterStemmer() 
 import os
 import csv
 import math
@@ -244,7 +243,7 @@ def travel_all_file(Dirs_path):
         file_label = file_label[(len(file_label)-1)-1]
         text = read_txt(fullname)
         tokens = get_tokens(text)
-        stemmed = stem_tokens(tokens, PorterStemmer())
+        stemmed = stem_tokens(tokens, PorterStemmer() )
         text = remove_stopwords(stemmed)
         texts.append(text)
         label.append(file_label)

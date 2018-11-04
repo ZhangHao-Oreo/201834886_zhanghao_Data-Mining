@@ -21,21 +21,21 @@ import numpy as np
 
 
 
-dirs_path = "E:\\20news-18828"
-file_dir_train = "E:\\data_set_1\\train_set"
-file_dir_test = "E:\\data_set_1\\test_set"
+dirs_path = "E:\\data_set_1\\test_set"
+file_dir_train = "E:\\data_set_2\\train_set"
+file_dir_test = "E:\\data_set_2\\test_set"
 file_w = 0.5
 
 """
 dirs_path = "E:\\data_set_1\\train_set"
 file_dir_train = "E:\\data_set_2\\train_set"
 file_dir_test = "E:\\data_set_2\\test_set"
-file_w = 0.7
+file_w = 0.5
 
 
 dirs_path = "E:\\data_set_2\\test_set"
-file_dir_train = "E:\\data_set_3\\train_set"
-file_dir_test = "E:\\data_set_3\\test_set"
+file_dir_train = "E:\\data_set_1\\train_set"
+file_dir_test = "E:\\data_set_2\\test_set"
 file_w = 0.7
 
 
@@ -51,9 +51,9 @@ tmp_texts = "E:\\real\\Texts.csv"
 tmp_label = "E:\\real\\Label.csv"
 tmp_Dict = "E:\\real\\Dict.csv"
 tmp_TF_IDF = "E:\\real\\TF_IDF.csv"
-tmp_Label_test = "E:\\real\\Label_test.csv"
-tmp_Texts_test = "E:\\real\\Tests_test.csv"
-tmp_TF_IDF_test = "E:\\real\\TF_IDF_test.csv"
+tmp_Label_test = "E:\\real\\Label_test_1.csv"
+tmp_Texts_test = "E:\\real\\Tests_test_1.csv"
+tmp_TF_IDF_test = "E:\\real\\TF_IDF_test_1.csv"
 tmp_Dict_full = "E:\\real\\Dict_DF.csv"
 
                 
@@ -213,15 +213,46 @@ def judge_dataset(train, train_label, test,test_label,k):
         tmp_list = []
         tmp_list = knn(train, train_label, test_i)
         tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=True)
-        for k_i in range(3,k):
+        for k_i in range(15,k,5):
             top_label = eq_labe(tmp_list,k_i)
             if test_label[num_test] != top_label:
                 error[k_i] += 1
 #                print (k_i,"    " error[k_i])
         num_test += 1
-    for k_i in range(3,k):
+    for k_i in range(15,k,5):
         print (" K取 ",k_i, "时 正确率为 = ",1-error[k_i]/len(test_label) )
+    return error
         
+
+# 0-1型vsm
+def vector_0_1(texts_v, dict_v):
+    vectors = []
+#    i = 0
+    for text_v in texts_v:
+        vector = []
+        for word in dict_v:
+            if word in text_v:
+                vector.append(1)
+            else:
+                vector.append(0)
+        vectors.append(vector)
+#        i += 1
+#        print(i)
+    return vectors
+
+# 出现次数型vsm
+def vector_count(texts_v, dict_v):
+    vectors = []
+#    i = 0
+    for text_v in texts_v:
+        vector = []
+        for word in dict_v:
+            vector.append(text_v.count(word))
+        vectors.append(vector)
+#        i += 1
+#        print(i)
+    return vectors
+
 
 
 """
@@ -268,11 +299,14 @@ if __name__ == '__main__':
 #    Dict = vsm.process_str(Dict)
 #计算TF-IDF
     Dict_full = vsm.compute_df(Texts,Dict)
+    vsm.record ("E:\\real\\Dict_fullF.csv","Other",Dict_full)
+#    Dict_full = read_csv("E:\\real\\Dict_fullF.csv")
+#    Dict_full = process_str(Dict_full)
     Dict = []
     tmp_Dict_full = dict()
     for Dict_full_i in Dict_full:
         t = Dict_full[Dict_full_i]
-        if t > 3:
+        if t > 10:
             Dict.append(Dict_full_i)
             tmp_Dict_full[Dict_full_i] = t
     Dict_full = tmp_Dict_full        
@@ -294,6 +328,6 @@ if __name__ == '__main__':
 #    Vectors_TF_IDF_test = read_csv(tmp_TF_IDF_test)
 
 #KNN
-    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,40)
+    Correct = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,80)
 #    similarity = cosine_similarity(vsm_train,vsm_test)
     judge_dataset(vsm_train, Label,vsm_test,Label_test,40)

@@ -231,7 +231,7 @@ def travel_all_file(Dirs_path):
     texts =[]
     label = []
     print ("将规则化的词读入内存_并保存临时文件")
-#    i = 0
+    i = 0
     for fullname in iterbrowse(Dirs_path):
         #fullname是绝对路径
         #print fullname 
@@ -248,8 +248,8 @@ def travel_all_file(Dirs_path):
         texts.append(text)
         label.append(file_label)
 #        write_txt(text,fullname)        
-#        i=i+1
-#        print ("pre_text =",i)
+        i=i+1
+        print ("pre_text =",i)
     
     print ("________OK")
     end = time.time()
@@ -299,12 +299,12 @@ def build_dict(text,dict_tmp,texts):
         if hasNumbers(words) == False :
     #        print ( hasNumbers(words))
     #    for w in words:
-        #length_words = len(words)
-        #if length_words > 3 and length_words < 14:
+            length_words = len(words)
+            if length_words > 3 and length_words < 14:
             #if text.count(words) > 1:
                 #    if word_in_file_num(texts,words) > 5:
-            if words not in dict_tmp:
-                dict_tmp.append(words)
+                if words not in dict_tmp:
+                    dict_tmp.append(words)
                     #print (words)
     return dict_tmp
 
@@ -318,12 +318,12 @@ input:i [int] 遍历文件数目
 """
 def travel_all_file_build_dict(texts):
     start = time.time()
-#    i = 0  
+    i = 0  
     dict_tmp = []
     for text in texts:
         dict_tmp = build_dict(text,dict_tmp,texts)
-#        i += 1
-#        print ("build_dict =",i)
+        i += 1
+        print ("build_dict =",i)
 #    print ("\n SUCCESS travel_all_file_build_dict number =",i)
     end = time.time()
     print ("构建词典____ok")

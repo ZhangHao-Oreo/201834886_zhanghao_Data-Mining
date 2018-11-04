@@ -18,12 +18,13 @@ import nltk
 import string
 from nltk.corpus import stopwords     #使用nltk提供的的stopwords
 from nltk.stem.porter import PorterStemmer        # 提取词干
+Stemmer = PorterStemmer() 
 import os
 import csv
 import math
 import shutil  #用于拷贝文件
 import time
-
+import re
 
 #from collections import Counter
 #------------------------
@@ -283,7 +284,8 @@ def record (path,flag,content):
         wirte_csv(path ,content)
         print ("写入 Other 成功 ")
     
-    
+def hasNumbers(inputString):
+    return bool(re.search(r'\d', inputString))   
 
 """
 name:build_dict
@@ -295,13 +297,15 @@ def build_dict(text,dict_tmp,texts):
     #words_list = str.split(text)
     words_list = text
     for words in words_list:    
+        if hasNumbers(words) == False :
+    #        print ( hasNumbers(words))
     #    for w in words:
         #length_words = len(words)
         #if length_words > 3 and length_words < 14:
             #if text.count(words) > 1:
                 #    if word_in_file_num(texts,words) > 5:
-        if words not in dict_tmp:
-            dict_tmp.append(words)
+            if words not in dict_tmp:
+                dict_tmp.append(words)
                     #print (words)
     return dict_tmp
 
@@ -396,7 +400,7 @@ def compute_tf_idf(Dict,texts,Dict_full):
             tf = compute_tf(text,word)
             idf = compute_idf(texts,word,Dict_full)
             tf_idf = tf * idf
-            tf_idf = int(tf_idf+0.5)
+            #tf_idf = int(tf_idf+0.5)
             vector.append(tf_idf)
         vectors.append(vector)
     end = time.time()

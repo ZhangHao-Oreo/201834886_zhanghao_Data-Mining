@@ -91,13 +91,14 @@ def Cosine_Distance(x,y):
     # solution2
     #dist = pdist(np.vstack([x,y]),'cosine')
     #return dist
+    
     x = np.mat(x)
     y = np.mat(y)
     num = float(x * y.T)
     denom = np.linalg.norm(x) * np.linalg.norm(y)
     cos = num / denom
-    dist = 0.5 + 0.5 * cos
-    return dist
+    
+    return cos
 
 
 from numpy import linalg as la
@@ -131,7 +132,7 @@ def compute_tf_idf_test(Dict,texts,Dict_full):
             tf = vsm.compute_tf(text,word)
             idf = Dict_full[word]
             tf_idf = tf * idf
-            tf_idf = int(tf_idf+0.5)
+            #tf_idf = int(tf_idf+0.5)
             vector.append(tf_idf)
         vectors.append(vector)
     #end = time.time()
@@ -146,11 +147,12 @@ train_label = Label
 test_label = Label_test 
 test_v = Vectors_TF_IDF_test[73]
 test = Vectors_TF_IDF_test
-k = 20
+test_v = vsm_test [1]
+k = 10
 
 Cosine_Distance(np.array(Vectors_TF_IDF_test[74]),np.array(Vectors_TF_IDF_test[73]))
 """
-def knn(train, train_label, test_v,k):
+def knn(train, train_label, test_v):
 #    print("KNN")
     tmp_list = []
     i = 0
@@ -159,25 +161,12 @@ def knn(train, train_label, test_v,k):
         train_v = np.array(train_v)
         #dists = Euclidean_Distance(test_v,train_v)
         dists = Cosine_Distance(test_v,train_v)
+        #dists = pearsonSimilar(test_v,train_v)
         tmp_list.append([Label[i],dists])
         i += 1
-    tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=True)
-    tmp_list = tmp_list[0:k]    
-    Dict_list_knn = []
-    for tmp_list_i in range(len(tmp_list)):
-        tmp_list[tmp_list_i][0]
-        if tmp_list[tmp_list_i][0] not in Dict_list_knn:
-            Dict_list_knn.append(tmp_list[tmp_list_i][0])
-    top_label = Dict_list_knn[0]
-    top_num = 0
-    tmp_list_tmp = []
-    for tmp_list_i in range(k):
-        tmp_list_tmp.append(tmp_list [tmp_list_i][0])
-    tmp_list = tmp_list_tmp
-    for Dict_list_i in Dict_list_knn:
-        if tmp_list.count(Dict_list_i) > top_num:
-            top_label = Dict_list_i
-    return top_label
+    return tmp_list
+    
+   
 
 
         
@@ -193,16 +182,56 @@ test_label[0:20] = Label [15:25]
 """
 
 
+def eq_labe(tmp_list,k):
+   # k = 6
+    tmp_list = tmp_list[0:k]    
+    Dict_list_knn = []
+    for tmp_list_i in range(len(tmp_list)):
+        tmp_list[tmp_list_i][0]
+        if tmp_list[tmp_list_i][0] not in Dict_list_knn:
+            Dict_list_knn.append(tmp_list[tmp_list_i][0])
+    top_label = Dict_list_knn[0]
+    top_num = 0
+    tmp_list_tmp = []
+    for tmp_list_i in range(k):
+        tmp_list_tmp.append(tmp_list [tmp_list_i][0])
+    tmp_list = tmp_list_tmp
+    for Dict_list_i in Dict_list_knn:
+        if tmp_list.count(Dict_list_i) > top_num:
+            top_label = Dict_list_i
+            top_num = tmp_list.count(Dict_list_i)
+    return top_label        
+
+    #judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,40)
 
 def judge_dataset(train, train_label, test,test_label,k):
-    knn_out = []
     num_test = 0
     print ("k = ",k)
+    error = [0]*k
     for test_i in test:
         print (num_test)
-        tmp_label_knn = knn(train, train_label, test_i,k)
+        tmp_list = []
+        tmp_list = knn(train, train_label, test_i)
+        tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=True)
+        for k_i in range(3,k):
+            top_label = eq_labe(tmp_list,k_i)
+            if test_label[num_test] != top_label:
+                error[k_i] += 1
+        num_test += 1
+    for k_i in range(3,k):
+        print (k_i," error = ",error[k_i] )
+        
+
+
+"""
+        
         knn_out.append(tmp_label_knn)   
         num_test += 1
+    
+
+    
+    
+    
     if len(test_label) == len(knn_out):
         error_num = 0
         i = 0
@@ -217,7 +246,7 @@ def judge_dataset(train, train_label, test,test_label,k):
     else:
         print ("计算错误_!!!!!!!!!")
         return 2,knn_out
-
+"""
 if __name__ == '__main__':
 
 
@@ -264,5 +293,5 @@ if __name__ == '__main__':
 #    Vectors_TF_IDF_test = read_csv(tmp_TF_IDF_test)
 
 #KNN
-    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,3)
+    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,40)
 #    similarity = cosine_similarity(vsm_train,vsm_test)

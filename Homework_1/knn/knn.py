@@ -16,7 +16,7 @@ import sys
 sys.path.append('C:\\Users\\zh_lab\\Documents\\GitHub\\201834886_zhanghao_Data-Mining\\Homework_1\\vsm') 
 import vsm 
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+
 #from scipy.spatial.distance import pdist
 
 
@@ -102,9 +102,6 @@ def Cosine_Distance(x,y):
 
 from numpy import linalg as la
  
-#欧式距离
-def euclidSimilar(inA,inB):
-    return 1.0/(1.0+la.norm(inA-inB))
 
 #皮尔逊相关系数
 def pearsonSimilar(inA,inB):
@@ -164,7 +161,7 @@ def knn(train, train_label, test_v,k):
         dists = Cosine_Distance(test_v,train_v)
         tmp_list.append([Label[i],dists])
         i += 1
-    tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=False)
+    tmp_list = sorted(tmp_list, key=lambda x: x[1], reverse=True)
     tmp_list = tmp_list[0:k]    
     Dict_list_knn = []
     for tmp_list_i in range(len(tmp_list)):
@@ -267,5 +264,5 @@ if __name__ == '__main__':
 #    Vectors_TF_IDF_test = read_csv(tmp_TF_IDF_test)
 
 #KNN
-    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,30)
+    Correct,Knn_out = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,3)
 #    similarity = cosine_similarity(vsm_train,vsm_test)

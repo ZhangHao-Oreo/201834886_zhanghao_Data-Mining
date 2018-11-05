@@ -301,10 +301,10 @@ def build_dict(text,dict_tmp,texts):
     #    for w in words:
             length_words = len(words)
             if length_words > 3 and length_words < 14:
-            #if text.count(words) > 1:
+                if text.count(words) > 3:
                 #    if word_in_file_num(texts,words) > 5:
-                if words not in dict_tmp:
-                    dict_tmp.append(words)
+                    if words not in dict_tmp:
+                        dict_tmp.append(words)
                     #print (words)
     return dict_tmp
 
@@ -382,7 +382,8 @@ def compute_df(texts,Dict):
 #        print ("word_tf " ,i)
 #        i += 1
         df = word_in_file_num(texts,word) 
-        Dict_full[word] = df
+        Dict_full[word] = math.log(len(texts) / df)
+        
     return Dict_full
 
 
@@ -397,7 +398,7 @@ def compute_tf_idf(Dict,texts,Dict_full):
         vector = []
         for word in Dict:
             tf = compute_tf(text,word)
-            idf = compute_idf(texts,word,Dict_full)
+            idf = Dict_full[word]
             tf_idf = tf * idf
             #tf_idf = int(tf_idf+0.5)
             vector.append(tf_idf)

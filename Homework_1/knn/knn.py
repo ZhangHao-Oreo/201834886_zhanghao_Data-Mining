@@ -225,7 +225,7 @@ def judge_dataset(train, train_label, test,test_label,k):
         
 
 # 0-1型vsm
-def vector_0_1(texts_v, dict_v):
+def vector_0_1(dict_v,texts_v):
     vectors = []
 #    i = 0
     for text_v in texts_v:
@@ -241,7 +241,7 @@ def vector_0_1(texts_v, dict_v):
     return vectors
 
 # 出现次数型vsm
-def vector_count(texts_v, dict_v):
+def vector_count(dict_v,texts_v):
     vectors = []
 #    i = 0
     for text_v in texts_v:
@@ -312,7 +312,9 @@ if __name__ == '__main__':
     Dict_full = tmp_Dict_full        
     vsm.record (tmp_Dict_full,"Other",Dict_full)
 #    Dict_full = read_csv(tmp_Dict_full)
-    Vectors_TF_IDF = vsm.compute_tf_idf(Dict,Texts,Dict_full)
+    Vectors_Texts = vector_0_1(Dict,Texts)
+    Vectors_Texts_v = vector_count(Dict,Texts)
+    Vectors_TF_IDF= vsm.compute_tf_idf(Dict,Texts,Dict_full)
     vsm.record ("path","TF_IDF",Vectors_TF_IDF)
 #    Vectors_TF_IDF = read_csv(tmp_TF_IDF)
 #规则话测试集
@@ -324,10 +326,14 @@ if __name__ == '__main__':
 #    Label_test = vsm.process_str(Label)
 #计算test_TF_IDF
     Vectors_TF_IDF_test = compute_tf_idf_test(Dict,Texts_test,Dict_full)
+    Vectors_test = vector_0_1(Dict,Texts_test)
+    Vectors_test_v = vector_count(Dict,Texts_test)
     vsm.record (tmp_TF_IDF_test,"Other",Vectors_TF_IDF_test)
 #    Vectors_TF_IDF_test = read_csv(tmp_TF_IDF_test)
 
 #KNN
-    Correct = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,80)
+    Correct_1 = judge_dataset(Vectors_TF_IDF, Label,Vectors_TF_IDF_test,Label_test,200)
+    Correct2 = judge_dataset(Vectors_Texts, Label, Vectors_test,Label_test,200)
+    Correct3 = judge_dataset(Vectors_Texts_v, Label, Vectors_test_v,Label_test,200)
 #    similarity = cosine_similarity(vsm_train,vsm_test)
-    judge_dataset(vsm_train, Label,vsm_test,Label_test,40)
+#    judge_dataset(vsm_train, Label,vsm_test,Label_test,40)

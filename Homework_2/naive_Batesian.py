@@ -283,12 +283,81 @@ def travel_all_file_build_dict(texts):
         # (dict)
 """
 
-P_count
+
+def Find_Label(F_Label):
+    FLabels = []
+    c_label = F_Label[0]
+    i = 0
+    for label_f in F_Label:
+        if c_label == label_f:
+            i += 1
+        else:
+            FLabels.append([c_label,i-1])
+            c_label = label_f
+            i += 1
+    FLabels.append([c_label,i-1])
+    return FLabels
+
+
+
+def P_count(P_Texts,P_Dict):
+    C_dict = []
+    for text_p in P_Texts:
+        vector = []
+        for word in P_Dict:
+             vector.append(text_p.count(word))
+        C_dict.append(vector)
+    return C_dict
+
+def count(documents, labels, dictionary):
+    print('preprocessing')
+    # 按类记录token
+    C_feature = []
+    # 所有token
+    C_all = []
+    # 每类数量
+    C_kind = []
+    for i in range(len(documents)):
+        # 只保留词典中出现的token
+        document = list(filter(lambda token: token in dictionary, documents[i]))
+        C_all += document
+        if labels[i] < len(C_feature):
+            C_feature[int(labels[i])] += document
+            C_kind[int(labels[i])] += 1
+        else:
+            C_feature.append(document)
+            C_kind.append(1)
+        print(i)
+    return C_feature, C_kind, C_all
+
+ C_feature, C_kind, C_all = count(Texts, Label, Dict)
+
+
+def NBC(C_dict,FLabels):
+    vector = []
+    h = 0
+    for i  in range( len(FLabels)):
+        vectors = []
+        vectors = C_dict[h]
+        for j in range (h +1 ,FLabels[i][1]):
+            h += 1
+            for k in range(0,len(C_dict[j])):
+                vectors[k] += C_dict[j][k]                
+        vector.append(vectors)
 
 
 Texts,Label = travel_all_file(file_dir_train)
 record ("path","Label",Label)
-record ("path","Texts",Texts)    
+record ("path","Texts",Texts)
+#    Texts = read_csv(tmp_texts)
+#    Label = read_csv(tmp_label)
+#    Label = process_str(Label) 
+
 Dict = travel_all_file_build_dict(Texts)
+
+#    Dict = read_csv(tmp_Dict)
+#    Dict = process_str(Dict)
 record ("path","Dict",Dict)
+C_dict = P_count(Texts,Dict)
+FLabels = Find_Label(Label)
 

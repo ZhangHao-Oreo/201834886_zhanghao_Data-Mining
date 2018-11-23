@@ -14,6 +14,7 @@ import os
 import csv
 import time
 import re
+from _collections import defaultdict
 
 
 """
@@ -152,10 +153,79 @@ def iterbrowse(path):
     for home, dirs, files in os.walk(path):
         for filename in files:
             yield os.path.join(home, filename)
-            
-            
-            
 
+def travel_all_file_merge(Dirs_path = "E:\\tmp\\"):          
+        texts = []
+        tmp_label = " "     
+        text_ = ""
+        for fullname in iterbrowse(Dirs_path):      
+            file_label = fullname.split("\\")
+            file_label = file_label[(len(file_label)-1)-1]
+            text = read_txt(fullname)
+            tokens = get_tokens(text)
+            stemmed = stem_tokens(tokens, PorterStemmer() )
+            text = remove_stopwords(stemmed)
+            text = " ".join(text)
+            if tmp_label == file_label:
+                text_ = text_+ text + " "
+            else:
+                texts.append(text_)
+                tmp_label = file_label
+                text_ = ""
+                text_ = text_+ text + " "
+        texts.append(text_)
+        return texts
+    
+texts = travel_all_file_merge(file_dir_train)
+
+
+
+dict_all = [] 
+for texts_ in texts:
+    dict_tmp = build_dict_text(texts_)
+    dict_all.append(dict_tmp)
+
+
+dict_tmp_count = build_dict_count_text(texts,dict_all)
+def build_dict_count_text(text_,dict_):
+    i = 0
+    dict_tmp_count = []
+    for texts_ in texts:
+        dict_tmp_count.append(dict_count_text(texts_,dict_[i]))
+        i += 1
+    return dict_tmp_count
+
+
+
+dict_1 = build_dict_text(texts[1])
+
+def build_dict_text(text_=texts[1]):
+    dict_tmp = []
+    words_list = str.split(text_)
+    length_text = len(words_list)
+    for words in words_list:    
+        length_words = len(words)
+        if length_words > 3 and length_words < 10:
+           if words_list.count(words) > length_text*0.0001:
+               if words not in dict_tmp:
+                   dict_tmp.append(words)
+    return dict_tmp
+
+def dict_count_text(text_,dict_):
+    dict_c = {}
+    words_list = str.split(text_)
+    for dict_i in dict_: 
+        dict_c[dict_i]=words_list.count(dict_i)
+    return dict_c
+
+dict_c_1 = dict_count_text(texts[1],dict_1)
+
+
+
+if dict_c_1["scott1"] < 0 :
+    print ("1")
+else:
+    print ("0")
 """
 name:dirs_path [str]  根目录路径
 遍历所有文件
@@ -309,30 +379,6 @@ def P_count(P_Texts,P_Dict):
         C_dict.append(vector)
     return C_dict
 
-def count(documents, labels, dictionary):
-    print('preprocessing')
-    # 按类记录token
-    C_feature = []
-    # 所有token
-    C_all = []
-    # 每类数量
-    C_kind = []
-    for i in range(len(documents)):
-        # 只保留词典中出现的token
-        document = list(filter(lambda token: token in dictionary, documents[i]))
-        C_all += document
-        if labels[i] < len(C_feature):
-            C_feature[int(labels[i])] += document
-            C_kind[int(labels[i])] += 1
-        else:
-            C_feature.append(document)
-            C_kind.append(1)
-        print(i)
-    return C_feature, C_kind, C_all
-
- C_feature, C_kind, C_all = count(Texts, Label, Dict)
-
-
 def NBC(C_dict,FLabels):
     vector = []
     h = 0
@@ -346,12 +392,27 @@ def NBC(C_dict,FLabels):
         vector.append(vectors)
 
 
+
+def NBC(Texts_,FLabels):
+    vector = []
+    h = 0
+    for i  in range( len(FLabels)):
+        vectors = []
+        for j in range (h +1 ,FLabels[i][1]):
+            h += 1
+            for k in range(len(Texts_)):
+                vectors[k] += C_dict[j][k]                
+        vector.append(vectors)
+
+
 Texts,Label = travel_all_file(file_dir_train)
 record ("path","Label",Label)
 record ("path","Texts",Texts)
 #    Texts = read_csv(tmp_texts)
 #    Label = read_csv(tmp_label)
 #    Label = process_str(Label) 
+Texts_test,Label_test = travel_all_file(file_dir_test)
+
 
 Dict = travel_all_file_build_dict(Texts)
 
@@ -361,3 +422,15 @@ record ("path","Dict",Dict)
 C_dict = P_count(Texts,Dict)
 FLabels = Find_Label(Label)
 
+
+
+
+
+
+try:
+    num = dict_c_1["scott1"]
+except KeyError:
+    num = 0
+    print(num) 
+else:
+    print(num) 

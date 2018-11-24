@@ -15,12 +15,12 @@ import csv
 import time
 import re
 from _collections import defaultdict
-
+import math
 
 """
 dirs_path = "E:\\20news-18828"
-file_dir_train = "E:\\data_set_3\\train_set\\"
-file_dir_test = "E:\\data_set_3\\test_set\\"
+file_dir_train = "E:\\data_set_2\\train_set\\"
+file_dir_test = "E:\\data_set_2\\test_set\\"
 
 
 tmp_texts = "E:\\real\\Texts.csv"
@@ -175,19 +175,15 @@ def travel_all_file_merge(Dirs_path = "E:\\tmp\\"):
                 text_ = text_+ text + " "
         texts.append(text_)
         return texts
-    
-texts = travel_all_file_merge(file_dir_train)
 
+def build_dict(texts):
+    dict_all = [] 
+    for texts_ in texts:
+        dict_tmp = build_dict_text(texts_)
+        dict_all.append(dict_tmp)
+    return dict_all
 
-
-dict_all = [] 
-for texts_ in texts:
-    dict_tmp = build_dict_text(texts_)
-    dict_all.append(dict_tmp)
-
-
-dict_tmp_count = build_dict_count_text(texts,dict_all)
-def build_dict_count_text(text_,dict_):
+def build_dict_count_text(texts,dict_):
     i = 0
     dict_tmp_count = []
     for texts_ in texts:
@@ -197,9 +193,9 @@ def build_dict_count_text(text_,dict_):
 
 
 
-dict_1 = build_dict_text(texts[1])
+#dict_1 = build_dict_text(texts[1])
 
-def build_dict_text(text_=texts[1]):
+def build_dict_text(text_):
     dict_tmp = []
     words_list = str.split(text_)
     length_text = len(words_list)
@@ -218,7 +214,29 @@ def dict_count_text(text_,dict_):
         dict_c[dict_i]=words_list.count(dict_i)
     return dict_c
 
-dict_c_1 = dict_count_text(texts[1],dict_1)
+
+
+
+def dict_marge(Dict_count):
+#    dict_all_.remove("")
+    dict_tmp = []
+    for  Dict_count_i in Dict_count:
+        for words in Dict_count_i:
+            if Dict_count_i[words] > len(Dict_count_i)*0.003:
+                if words not in dict_tmp:
+                    dict_tmp.append(words)
+    return dict_tmp
+
+def fin_dict(Dict_,Texts_):
+    din_dict_tmp = []
+    for text_ in Texts_:
+        dict_tmp = []
+        dict_tmp = dict_count_text(text_,Dict_)
+        din_dict_tmp.append(dict_tmp)
+    return din_dict_tmp
+    
+
+
 
 
 
@@ -231,6 +249,31 @@ name:dirs_path [str]  根目录路径
 遍历所有文件
 input:i [int] 遍历文件数目
 """
+def travel_all_file_label(Dirs_path):
+    print (Dirs_path)
+    start = time.time()
+    texts =[]
+    label = []
+    print ("将规则化的词读入内存_并保存临时文件")
+    i = 0
+    for fullname in iterbrowse(Dirs_path):
+        file_label = fullname.split("\\")
+        file_label = file_label[(len(file_label)-1)-1]
+        #text = read_txt(fullname)
+        #tokens = get_tokens(text)
+        #stemmed = stem_tokens(tokens, PorterStemmer() )
+        #text = remove_stopwords(stemmed)
+        #texts.append(text)
+        label.append(file_label)
+#        write_txt(text,fullname)        
+        i=i+1
+        print ("pre_text =",i)
+    print ("________OK")
+    end = time.time()
+    print (end-start ,"s")
+    return label
+
+
 def travel_all_file(Dirs_path):
     print (Dirs_path)
     start = time.time()
@@ -239,12 +282,6 @@ def travel_all_file(Dirs_path):
     print ("将规则化的词读入内存_并保存临时文件")
     i = 0
     for fullname in iterbrowse(Dirs_path):
-        #fullname是绝对路径
-        #print fullname 
-        #filename=os.path.basename(fullname)
-        #filename是目录下的所有文件名
-        #print (filename)
-        #读文件
         file_label = fullname.split("\\")
         file_label = file_label[(len(file_label)-1)-1]
         text = read_txt(fullname)
@@ -256,11 +293,11 @@ def travel_all_file(Dirs_path):
 #        write_txt(text,fullname)        
         i=i+1
         print ("pre_text =",i)
-    
     print ("________OK")
     end = time.time()
     print (end-start ,"s")
     return texts,label
+
 
 """
 name:记录数据
@@ -293,49 +330,7 @@ def record (path,flag,content):
 def hasNumbers(inputString):
     return bool(re.search(r'\d', inputString))   
 
-"""
-name:build_dict
-input:text [str] 输入单个文本全部内容  texts [list]   所有文档
-构建词典
-output:dict_tmp [str] 
-"""
-def build_dict(text,dict_tmp,texts):
-    #words_list = str.split(text)
-    words_list = text
-    for words in words_list:    
-        if hasNumbers(words) == False :
-    #        print ( hasNumbers(words))
-    #    for w in words:
-            length_words = len(words)
-            if length_words > 3 and length_words < 14:
-                if text.count(words) > 3:
-                #    if word_in_file_num(texts,words) > 5:
-                    if words not in dict_tmp:
-                        dict_tmp.append(words)
-                    #print (words)
-    return dict_tmp
 
-
-
-
-"""
-name:texts [list]  所以文件
-遍历所有文件构建词典
-input:i [int] 遍历文件数目
-"""
-def travel_all_file_build_dict(texts):
-    start = time.time()
-    i = 0  
-    dict_tmp = []
-    for text in texts:
-        dict_tmp = build_dict(text,dict_tmp,texts)
-        i += 1
-        print ("build_dict =",i)
-#    print ("\n SUCCESS travel_all_file_build_dict number =",i)
-    end = time.time()
-    print ("构建词典____ok")
-    print (end-start ,"s")
-    return dict_tmp
 
 """    
     for fullname in iterbrowse(dirs_path):
@@ -354,19 +349,7 @@ def travel_all_file_build_dict(texts):
 """
 
 
-def Find_Label(F_Label):
-    FLabels = []
-    c_label = F_Label[0]
-    i = 0
-    for label_f in F_Label:
-        if c_label == label_f:
-            i += 1
-        else:
-            FLabels.append([c_label,i-1])
-            c_label = label_f
-            i += 1
-    FLabels.append([c_label,i-1])
-    return FLabels
+
 
 
 
@@ -404,33 +387,114 @@ def NBC(Texts_,FLabels):
                 vectors[k] += C_dict[j][k]                
         vector.append(vectors)
 
+def p_h_compute(Label_):
+    tmp = Label_[0]
+    P_h = {}
+    i = 0
+    all_len = len(Label_)
+    for label_i in Label_:
+        if tmp == label_i :
+            i += 1
+        else:
+            P_h[tmp] = i/all_len
+            tmp = label_i
+            i = 1
+    P_h[tmp] = i/all_len
+    return P_h
 
-Texts,Label = travel_all_file(file_dir_train)
-record ("path","Label",Label)
-record ("path","Texts",Texts)
-#    Texts = read_csv(tmp_texts)
-#    Label = read_csv(tmp_label)
-#    Label = process_str(Label) 
+def count_all_words(Texts_):
+    tmp = 0
+    for Texts_i in Texts_:
+        tmp = tmp + len(Texts_i)
+    return tmp
+
+
+def coupute_p_D_h(word_,Dict_fin_i_):
+    try:
+        num = Dict_fin_i_[word_]
+    except KeyError:
+        num = 0
+    return  (num+1)/(all_words_f+dict_f)
+
+
+
+def dict_map_num_name():
+    tmp = {}
+    i = 0
+    for P_h_i in P_h:
+        tmp[i] = P_h_i
+        i += 1
+    tmp[i] = P_h_i
+    return tmp
+
+def Find_Label_range(F_Label):
+    FLabels = []
+    c_label = F_Label[0]
+    star = 0
+    i = 0
+    j = 0
+    for label_f in F_Label:
+        if c_label == label_f:
+            i += 1
+        else:
+            FLabels.append([j,star,i-1])
+            c_label = label_f
+            star = i
+            j += 1
+            i += 1
+    FLabels.append([j,star,i])        
+    return FLabels
+
+def test_label(Texts_test_  ,Dict_fin):
+    tmp_dict = {}
+    for i in range (len(Dict_fin)):
+        tmp = 0
+        for word_i in Texts_test_:
+            tmp = tmp + math.log(coupute_p_D_h(word_i,Dict_fin[i]))
+        tmp = tmp*(1-P_h[dict_map[i]])
+        tmp_dict[i] = tmp
+    return max(tmp_dict,key=tmp_dict.get)
+
+#test_label(Texts_test[1],Dict_fin)
+
+
+test_rate(Texts_test)
+
+def test_rate(Texts_test):
+    tmp = 0
+    for i in range(len(range_test)):
+        for j in range (range_test[i][1],range_test[i][2]):
+            if test_label(Texts_test[j],Dict_fin) == i:
+                tmp += 1
+    print (tmp/range_test[len(range_test)-1][2]*100,"%")            
+
+#按照类型归类文本
+Texts = travel_all_file_merge(file_dir_train)
+#计算总词数
+all_words_f = count_all_words(Texts)
+#分别建立词典
+Dict_all = build_dict(Texts)
+#统计各词典词频
+Dict_count = build_dict_count_text(Texts,Dict_all)
+#建立统一词典
+Dict = dict_marge(Dict_count)
+del Dict_count
+del Dict_all
+Texts.remove("")
+#统计统一词典词频
+Dict_fin = fin_dict(Dict,Texts)
+#词典大小
+dict_f = len(Dict_fin[0])
+#先验概率
+P_h = p_h_compute(Label)
+#建立词典字母与序号映射
+dict_map = dict_map_num_name()
+#读取测试集
 Texts_test,Label_test = travel_all_file(file_dir_test)
-
-
-Dict = travel_all_file_build_dict(Texts)
-
-#    Dict = read_csv(tmp_Dict)
-#    Dict = process_str(Dict)
-record ("path","Dict",Dict)
-C_dict = P_count(Texts,Dict)
-FLabels = Find_Label(Label)
+#测试集范围
+range_test = Find_Label_range(Label_test)
 
 
 
 
 
-
-try:
-    num = dict_c_1["scott1"]
-except KeyError:
-    num = 0
-    print(num) 
-else:
-    print(num) 

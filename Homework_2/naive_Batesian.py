@@ -20,7 +20,7 @@ import math
 """
 dirs_path = "E:\\20news-18828"
 file_dir_train = "E:\\data_set_2\\train_set\\"
-file_dir_test = "E:\\data_set_2\\test_set\\"
+file_dir_test = "E:\\data_set_3\\test_set\\"
 
 
 tmp_texts = "E:\\real\\Texts.csv"
@@ -201,10 +201,11 @@ def build_dict_text(text_):
     length_text = len(words_list)
     for words in words_list:    
         length_words = len(words)
-        if length_words > 3 and length_words < 10:
-           if words_list.count(words) > length_text*0.0001:
-               if words not in dict_tmp:
-                   dict_tmp.append(words)
+        if hasNumbers(words) != 1:
+            if length_words > 3 and length_words < 10:
+                if words_list.count(words) > length_text*0.00002:
+                    if words not in dict_tmp:
+                        dict_tmp.append(words)
     return dict_tmp
 
 def dict_count_text(text_,dict_):
@@ -222,7 +223,7 @@ def dict_marge(Dict_count):
     dict_tmp = []
     for  Dict_count_i in Dict_count:
         for words in Dict_count_i:
-            if Dict_count_i[words] > len(Dict_count_i)*0.003:
+            if Dict_count_i[words] > len(Dict_count_i)*0.0005:
                 if words not in dict_tmp:
                     dict_tmp.append(words)
     return dict_tmp
@@ -362,31 +363,6 @@ def P_count(P_Texts,P_Dict):
         C_dict.append(vector)
     return C_dict
 
-def NBC(C_dict,FLabels):
-    vector = []
-    h = 0
-    for i  in range( len(FLabels)):
-        vectors = []
-        vectors = C_dict[h]
-        for j in range (h +1 ,FLabels[i][1]):
-            h += 1
-            for k in range(0,len(C_dict[j])):
-                vectors[k] += C_dict[j][k]                
-        vector.append(vectors)
-
-
-
-def NBC(Texts_,FLabels):
-    vector = []
-    h = 0
-    for i  in range( len(FLabels)):
-        vectors = []
-        for j in range (h +1 ,FLabels[i][1]):
-            h += 1
-            for k in range(len(Texts_)):
-                vectors[k] += C_dict[j][k]                
-        vector.append(vectors)
-
 def p_h_compute(Label_):
     tmp = Label_[0]
     P_h = {}
@@ -409,12 +385,14 @@ def count_all_words(Texts_):
     return tmp
 
 
-def coupute_p_D_h(word_,Dict_fin_i_):
+def coupute_p_D_h(word_,Dict_fin_i_,count_,i_):
     try:
         num = Dict_fin_i_[word_]
     except KeyError:
         num = 0
-    return  (num+1)/(all_words_f+dict_f)
+#    return  (num+0.001)/(all_words_f+dict_f)
+#    return  (num+0.00001)/(all_words_f+count_)
+    return  (num+0.00001)/(len(Texts[i_])+count_)
 
 
 
@@ -424,7 +402,6 @@ def dict_map_num_name():
     for P_h_i in P_h:
         tmp[i] = P_h_i
         i += 1
-    tmp[i] = P_h_i
     return tmp
 
 def Find_Label_range(F_Label):
@@ -450,8 +427,9 @@ def test_label(Texts_test_  ,Dict_fin):
     for i in range (len(Dict_fin)):
         tmp = 0
         for word_i in Texts_test_:
-            tmp = tmp + math.log(coupute_p_D_h(word_i,Dict_fin[i]))
-        tmp = tmp*(1-P_h[dict_map[i]])
+            tmp = tmp + math.log(coupute_p_D_h(word_i,Dict_fin[i],len(Texts_test_),i))
+        tmp = tmp+math.log((P_h[dict_map[i]]))
+        #tmp = tmp +  math.log(len(Texts_test_)) - math.log(all_words_f)
         tmp_dict[i] = tmp
     return max(tmp_dict,key=tmp_dict.get)
 

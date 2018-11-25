@@ -223,7 +223,7 @@ def dict_marge(Dict_count):
     dict_tmp = []
     for  Dict_count_i in Dict_count:
         for words in Dict_count_i:
-            if Dict_count_i[words] > len(Dict_count_i)*0.0005:
+            if Dict_count_i[words] > len(Dict_count_i)*0.00005:
                 if words not in dict_tmp:
                     dict_tmp.append(words)
     return dict_tmp
@@ -448,6 +448,7 @@ def test_rate(Texts_test):
 
 #按照类型归类文本
 Texts = travel_all_file_merge(file_dir_train)
+wirte_csv("E:\\real\\Texts.csv" ,Texts)
 #计算总词数
 all_words_f = count_all_words(Texts)
 #分别建立词典
@@ -456,6 +457,7 @@ Dict_all = build_dict(Texts)
 Dict_count = build_dict_count_text(Texts,Dict_all)
 #建立统一词典
 Dict = dict_marge(Dict_count)
+wirte_csv("E:\\real\\Dict.csv" ,Dict)
 del Dict_count
 del Dict_all
 Texts.remove("")
@@ -465,6 +467,7 @@ Dict_fin = fin_dict(Dict,Texts)
 dict_f = len(Dict_fin[0])
 #先验概率
 P_h = p_h_compute(Label)
+wirte_csv("E:\\real\\P_h.csv" ,P_h)
 #建立词典字母与序号映射
 dict_map = dict_map_num_name()
 #读取测试集

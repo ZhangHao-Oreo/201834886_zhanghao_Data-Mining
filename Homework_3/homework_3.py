@@ -6,7 +6,6 @@ Created on Wed Dec  5 21:11:11 2018
 """
 
 
-
 import os
 import nltk
 import string
@@ -17,7 +16,15 @@ import re
 import numpy as np
 import time
 from sklearn.cluster import KMeans
+from sklearn.cluster import AffinityPropagation
+from sklearn.cluster import MeanShift
+from sklearn.cluster import SpectralClustering
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import DBSCAN
+from sklearn.cluster import GaussianMixture
 
+from sklearn.cluster import DBSCAN
+from sklearn import  metrics
 
 dirs_path = "E:\\Tweets.txt"
 
@@ -222,22 +229,58 @@ k = len(set(label))
 name:kmeans_my
 K-Means
 """
-def kmeans_my(k,X,y):
-    km = KMeans(n_clusters=k).fit(X)
-    tmp = km.labels_
-    pr = km.predict(X)
-
-    for i in tmp:
-        if pr[it_] ==
-    return pr
-
-
-    it_ = 0
-    count = 0
-    for i in tmp:
-        if i == y[it_]：:
-            count += 1
+def kmeans_my(k,X,labels):
+    clustering = KMeans(n_clusters=k).fit(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
     
     
-pr = kmeans_my(k,X,y)
+"""
+name:AffinityPropagation
+AffinityPropagation
+"""
+def affinitypropagation_my(X, labels):
+    clustering = AffinityPropagation().fit(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
 
+
+"""
+name:Mean-shift
+Mean-shift
+"""
+def mean_shift_my(X, labels):
+    clustering = MeanShift().fit(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+
+
+
+"""
+name:Spectral clustering
+Spectral clustering
+"""
+def spectral_my(X, y, k):
+    clustering = SpectralClustering(n_clusters=k).fit(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+
+"""
+name:Ward hierarchical clustering
+Ward hierarchical clustering
+"""
+def hierarchical_my(X, y, k):
+    clustering = AgglomerativeClustering(n_clusters=k).fit(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+
+"""
+name:DBSCAN
+DBSCAN
+"""
+def dbscan_my(X, y):
+    clustering = DBSCAN(eps=0.3).fit(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+
+"""
+name:Gaussian mixtures
+Gaussian mixtures
+"""
+def gaussian_my(X, y, k):
+    clustering = GaussianMixture(n_components=k).fit(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))

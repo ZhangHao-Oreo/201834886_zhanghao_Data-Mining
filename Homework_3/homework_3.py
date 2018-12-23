@@ -21,8 +21,7 @@ from sklearn.cluster import MeanShift
 from sklearn.cluster import SpectralClustering
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import DBSCAN
-from sklearn.cluster import GaussianMixture
-
+from sklearn.mixture import GaussianMixture
 from sklearn.cluster import DBSCAN
 from sklearn import  metrics
 
@@ -212,7 +211,7 @@ def compute_tf_idf(Dict,texts,Dict_full):
     return vectors
 
 
-texts,label =  read_text( "D:\\Tweets.txt")
+texts,label =  read_text( "E:\\Tweets.txt")
 text_1 = process_text(texts)
 dict_1 = build_dict(text_1)  
 Dict_full = compute_df(text_1,dict_1)
@@ -230,8 +229,8 @@ name:kmeans_my
 K-Means
 """
 def kmeans_my(k,X,labels):
-    clustering = KMeans(n_clusters=k).fit(X)
-    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+    clustering = KMeans(n_clusters=k).fit_predict(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering))
     
     
 """
@@ -239,8 +238,8 @@ name:AffinityPropagation
 AffinityPropagation
 """
 def affinitypropagation_my(X, labels):
-    clustering = AffinityPropagation().fit(X)
-    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+    clustering = AffinityPropagation().fit_predict(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering))
 
 
 """
@@ -248,8 +247,8 @@ name:Mean-shift
 Mean-shift
 """
 def mean_shift_my(X, labels):
-    clustering = MeanShift().fit(X)
-    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+    clustering = MeanShift().fit_predict(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering))
 
 
 
@@ -257,15 +256,15 @@ def mean_shift_my(X, labels):
 name:Spectral clustering
 Spectral clustering
 """
-def spectral_my(X, y, k):
-    clustering = SpectralClustering(n_clusters=k).fit(X)
-    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+def spectral_my(X, y, labels):
+    clustering = SpectralClustering().fit_predict(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering))
 
 """
 name:Ward hierarchical clustering
 Ward hierarchical clustering
 """
-def hierarchical_my(X, y, k):
+def hierarchical_my(X, y, labels):
     clustering = AgglomerativeClustering(n_clusters=k).fit(X)
     print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
 
@@ -273,14 +272,45 @@ def hierarchical_my(X, y, k):
 name:DBSCAN
 DBSCAN
 """
-def dbscan_my(X, y):
-    clustering = DBSCAN(eps=0.3).fit(X)
-    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+def dbscan_my(X, labels):
+    clustering = DBSCAN(eps=0.5).fit_predict(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering))
 
 """
 name:Gaussian mixtures
 Gaussian mixtures
 """
-def gaussian_my(X, y, k):
-    clustering = GaussianMixture(n_components=k).fit(X)
-    print (metrics.normalized_mutual_info_score(labels,clustering.labels_))
+def gaussian_my(X, y, labels):
+    clustering = GaussianMixture(n_components=k,covariance_type='diag').fit(X)
+    clustering_labels_ = clustering.predict(X)
+    print (metrics.normalized_mutual_info_score(labels,clustering_labels_))
+
+
+print ("kmeans")
+begin = time.time()
+kmeans_my(k,X,label)
+print (time.time() - begin)
+print ("AffinityPropagation")
+begin = time.time()
+affinitypropagation_my(X, label)
+print (time.time() - begin)
+print ("Mean-shift")
+begin = time.time()
+mean_shift_my(X, label)
+print (time.time() - begin)
+print ("Spectral clustering")
+begin = time.time()
+spectral_my(X, y, label)
+print (time.time() - begin)
+print ("Ward hierarchical clustering")
+begin = time.time()
+hierarchical_my(X, y, label)
+print (time.time() - begin)
+print ("DBSCAN")
+begin = time.time()
+dbscan_my(X, label)
+print (time.time() - begin)
+print ("Gaussian mixtures")
+begin = time.time()
+gaussian_my(X, y, label)
+print (time.time() - begin)

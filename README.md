@@ -14,12 +14,10 @@ Homework_1
 - TF-IDF_实验数据统计.txt
 - 报告书_实验一.pdf
 - 实验预处理后文本_词典_数据_过程文件.zip
-
 Homework_2
---naive_Batesian.py
---Data mining 实验2_报告书.pdf
---实验数据_过程文件.zip
-
+-- naive_Batesian.py
+-- Data mining 实验2_报告书.pdf
+-- 实验数据_过程文件.zip
 Homework_3
---Data mining 实验3_报告书.pdf
---homework_3.py
+-- Data mining 实验3_报告书.pdf
+-- homework_3.py
